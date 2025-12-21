@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { isSupabaseConfigured } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { AlertTriangle } from "lucide-react";
 import cmacLogo from "@/assets/cmac-logo.png";
 
 export default function Auth() {
@@ -19,7 +16,6 @@ export default function Auth() {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const configured = isSupabaseConfigured();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,14 +80,6 @@ export default function Auth() {
           </div>
         </CardHeader>
         <CardContent>
-          {!configured && (
-            <Alert className="mb-4 border-warning/50 bg-warning/10">
-              <AlertTriangle className="h-4 w-4 text-warning" />
-              <AlertDescription className="text-sm">
-                Supabase is not configured. Add your credentials to a <code className="bg-muted px-1 rounded">.env</code> file. See <code className="bg-muted px-1 rounded">.env.example</code> for details.
-              </AlertDescription>
-            </Alert>
-          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -102,7 +90,6 @@ export default function Auth() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={!configured}
               />
             </div>
             <div className="space-y-2">
@@ -115,10 +102,9 @@ export default function Auth() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                disabled={!configured}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading || !configured}>
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
             </Button>
           </form>

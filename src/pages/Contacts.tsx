@@ -2,31 +2,12 @@ import { MainLayout, PageHeader } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Search, Filter, MoreHorizontal } from "lucide-react";
-
-interface Contact {
-  id: string;
-  name: string;
-  type: "Customer" | "Crew";
-  label?: string;
-  email: string;
-  phone: string;
-  job: string;
-  createdAt: string;
-}
-
-const mockContacts: Contact[] = [
-  { id: "1", name: "Ateam", type: "Crew", label: "", email: "mike@ateamrestoration.org", phone: "-", job: "612 Inglenook...", createdAt: "Dec. 18, 2025" },
-  { id: "2", name: "betty white", type: "Customer", label: "", email: "goledn@girls.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 19, 2025" },
-  { id: "3", name: "CMAC IT Testing", type: "Customer", label: "", email: "notcodyv@cmacroofing.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 20, 2025" },
-  { id: "4", name: "cody viveiros", type: "Customer", label: "", email: "yadda@yes.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 17, 2025" },
-  { id: "5", name: "Garth Brooks", type: "Customer", label: "", email: "im@notamurderer.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 18, 2025" },
-  { id: "6", name: "hellen keller", type: "Customer", label: "", email: "tell2me@yahoo.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 1, 2025" },
-  { id: "7", name: "Hellen Keller", type: "Customer", label: "", email: "icantseeshit@airplane.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 1, 2025" },
-  { id: "8", name: "Jason Gamez", type: "Customer", label: "", email: "jas@jason.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 1, 2025" },
-  { id: "9", name: "katt williams", type: "Customer", label: "", email: "kitty@kat.com", phone: "(817) 751-2041", job: "199 County R...", createdAt: "Dec. 18, 2025" },
-];
+import { useContacts } from "@/hooks/useContacts";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Contacts() {
+  const { data: contacts = [], isLoading } = useContacts();
+
   return (
     <MainLayout>
       <div className="animate-fade-in">
@@ -86,26 +67,42 @@ export default function Contacts() {
                 </tr>
               </thead>
               <tbody>
-                {mockContacts.map((contact) => (
-                  <tr key={contact.id} className="border-b border-border hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-foreground">{contact.name}</td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-muted text-muted-foreground">
-                        {contact.type === "Crew" ? "👷" : "👤"} {contact.type}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">-</td>
-                    <td className="px-4 py-3 text-sm text-foreground">{contact.email}</td>
-                    <td className="px-4 py-3 text-sm text-foreground">{contact.phone}</td>
-                    <td className="px-4 py-3 text-sm text-foreground">{contact.job}</td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">{contact.createdAt}</td>
-                    <td className="px-4 py-3">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
+                {isLoading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <tr key={i} className="border-b border-border">
+                      <td colSpan={8} className="px-4 py-3">
+                        <Skeleton className="h-6 w-full" />
+                      </td>
+                    </tr>
+                  ))
+                ) : contacts.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                      No contacts found
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  contacts.map((contact) => (
+                    <tr key={contact.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 text-sm font-medium text-foreground">{contact.name}</td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-muted text-muted-foreground">
+                          {contact.type === "Crew" ? "👷" : "👤"} {contact.type}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{contact.label || "-"}</td>
+                      <td className="px-4 py-3 text-sm text-foreground">{contact.email}</td>
+                      <td className="px-4 py-3 text-sm text-foreground">{contact.phone}</td>
+                      <td className="px-4 py-3 text-sm text-foreground">{contact.job}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{contact.createdAt}</td>
+                      <td className="px-4 py-3">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
