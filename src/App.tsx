@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
@@ -45,6 +45,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function AuthRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
+  const isRecoveryMode = new URLSearchParams(location.search).get("mode") === "recovery";
 
   if (loading) {
     return (
@@ -54,7 +56,7 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (user) {
+  if (user && !isRecoveryMode) {
     return <Navigate to="/" replace />;
   }
 
