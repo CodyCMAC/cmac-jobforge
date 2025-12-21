@@ -1,140 +1,12 @@
-import { MainLayout, PageHeader } from "@/components/layout";
-import { PipelineBoard, Job, PipelineStage } from "@/components/jobs";
+import { MainLayout } from "@/components/layout";
+import { PipelineBoard, PipelineStage } from "@/components/jobs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, ChevronDown, Search, Filter, Grid3X3, List } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-// Mock data for demonstration
-const mockJobs: Job[] = [
-  {
-    id: "1",
-    address: "199 County Road 4840, Haslet, TX 76052",
-    customerName: "CMAC IT Testing",
-    value: 0,
-    status: "new",
-    createdAt: new Date(Date.now() - 5 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 5 * 60 * 1000),
-    assignee: { initials: "CV", name: "Cody Viveiros" },
-  },
-  {
-    id: "2",
-    address: "199 County Road 4840, Haslet, TX 76052",
-    customerName: "betty white",
-    value: 0,
-    status: "new",
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    assignee: { initials: "CV", name: "Cody Viveiros" },
-  },
-  {
-    id: "3",
-    address: "199 County Road 4840, Haslet, TX 76052",
-    customerName: "katt williams",
-    value: 0,
-    status: "new",
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    assignee: { initials: "CV", name: "Cody Viveiros" },
-  },
-  {
-    id: "4",
-    address: "199 County Road 4840, Haslet, TX 76052",
-    customerName: "stone cold",
-    value: 0,
-    status: "new",
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-    assignee: { initials: "CV", name: "Cody Viveiros" },
-  },
-  {
-    id: "5",
-    address: "199 County Road 4840, Haslet, TX 76052",
-    customerName: "Vanna White",
-    value: 0,
-    status: "new",
-    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    assignee: { initials: "CV", name: "Cody Viveiros" },
-  },
-  {
-    id: "6",
-    address: "199 County Road 4840, Haslet, TX 76052",
-    customerName: "Test Customer",
-    value: 0,
-    status: "scheduled",
-    createdAt: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000),
-    updatedAt: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000),
-    assignee: { initials: "AI", name: "Admin" },
-  },
-];
-
-const salesPipelineStages: PipelineStage[] = [
-  {
-    id: "new-lead",
-    name: "New lead",
-    color: "blue",
-    jobs: mockJobs.filter(j => j.status === "new"),
-  },
-  {
-    id: "appointment-scheduled",
-    name: "Appointment scheduled",
-    color: "cyan",
-    jobs: mockJobs.filter(j => j.status === "scheduled"),
-  },
-  {
-    id: "proposal-sent",
-    name: "Proposal sent/presented",
-    color: "purple",
-    jobs: [],
-  },
-  {
-    id: "proposal-followup",
-    name: "Proposal follow-up",
-    color: "orange",
-    jobs: [],
-  },
-];
-
-const productionPipelineStages: PipelineStage[] = [
-  {
-    id: "proposal-signed",
-    name: "Proposal signed",
-    color: "green",
-    jobs: [
-      {
-        id: "7",
-        address: "612 Inglenook Court, Coppell, TX 75019",
-        customerName: "Rick Cashmen",
-        value: 93583.71,
-        status: "signed",
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        assignee: { initials: "JG", name: "Jason Gamez" },
-        proposalStatus: "won",
-      },
-    ],
-  },
-  {
-    id: "pre-production",
-    name: "Pre-production",
-    color: "yellow",
-    jobs: [],
-  },
-  {
-    id: "production",
-    name: "Production",
-    color: "orange",
-    jobs: [],
-  },
-  {
-    id: "post-production",
-    name: "Post-production",
-    color: "teal",
-    jobs: [],
-  },
-];
+import { useJobs } from "@/hooks/useJobs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ViewMode = "board" | "list";
 type WorkflowType = "sales" | "production";
@@ -143,6 +15,63 @@ export default function Jobs() {
   const [viewMode, setViewMode] = useState<ViewMode>("board");
   const [workflow, setWorkflow] = useState<WorkflowType>("sales");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const { data: jobs = [], isLoading } = useJobs();
+
+  // Build pipeline stages from database jobs
+  const salesPipelineStages: PipelineStage[] = [
+    {
+      id: "new-lead",
+      name: "New lead",
+      color: "blue",
+      jobs: jobs.filter(j => j.status === "new"),
+    },
+    {
+      id: "appointment-scheduled",
+      name: "Appointment scheduled",
+      color: "cyan",
+      jobs: jobs.filter(j => j.status === "scheduled"),
+    },
+    {
+      id: "proposal-sent",
+      name: "Proposal sent/presented",
+      color: "purple",
+      jobs: jobs.filter(j => j.status === "sent"),
+    },
+    {
+      id: "proposal-followup",
+      name: "Proposal follow-up",
+      color: "orange",
+      jobs: [],
+    },
+  ];
+
+  const productionPipelineStages: PipelineStage[] = [
+    {
+      id: "proposal-signed",
+      name: "Proposal signed",
+      color: "green",
+      jobs: jobs.filter(j => j.status === "signed"),
+    },
+    {
+      id: "pre-production",
+      name: "Pre-production",
+      color: "yellow",
+      jobs: [],
+    },
+    {
+      id: "production",
+      name: "Production",
+      color: "orange",
+      jobs: jobs.filter(j => j.status === "production"),
+    },
+    {
+      id: "post-production",
+      name: "Post-production",
+      color: "teal",
+      jobs: jobs.filter(j => j.status === "complete"),
+    },
+  ];
 
   const stages = workflow === "sales" ? salesPipelineStages : productionPipelineStages;
 
@@ -231,7 +160,15 @@ export default function Jobs() {
         </div>
 
         {/* Pipeline Board */}
-        <PipelineBoard stages={stages} />
+        {isLoading ? (
+          <div className="flex gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-64 w-72 flex-shrink-0" />
+            ))}
+          </div>
+        ) : (
+          <PipelineBoard stages={stages} />
+        )}
       </div>
     </MainLayout>
   );
