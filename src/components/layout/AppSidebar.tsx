@@ -90,20 +90,27 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
     <aside
       className={cn(
         "fixed left-0 top-0 z-40 h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300",
-        collapsed ? "w-16" : "w-60"
+        collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Header with Logo */}
       <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-        <Link to="/" className="flex items-center gap-3 w-full">
-          <img 
-            src={collapsed ? cmacIcon : cmacLogo} 
-            alt="CMAC Roofing" 
-            className={cn(
-              "object-contain invert",
-              collapsed ? "h-8 w-8" : "h-8"
-            )}
-          />
+        <Link to="/" className="flex items-center gap-3 w-full group">
+          <div className={cn(
+            "flex items-center justify-center rounded-lg bg-primary/10 transition-all duration-200 group-hover:bg-primary/20",
+            collapsed ? "w-8 h-8" : "w-8 h-8"
+          )}>
+            <img 
+              src={cmacIcon} 
+              alt="CMAC" 
+              className="h-5 w-5 object-contain invert"
+            />
+          </div>
+          {!collapsed && (
+            <span className="text-lg font-bold text-sidebar-accent-foreground tracking-tight">
+              JobForge
+            </span>
+          )}
         </Link>
       </div>
 
@@ -112,9 +119,9 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
         <div className="px-3 py-3 border-b border-sidebar-border">
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-3 w-full hover:bg-sidebar-accent rounded-lg p-2 transition-colors"
+            className="flex items-center gap-3 w-full hover:bg-sidebar-accent rounded-lg p-2 transition-all duration-200"
           >
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center flex-shrink-0 shadow-md">
               <span className="text-primary-foreground font-bold text-sm">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
@@ -125,17 +132,17 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
                   <p className="text-xs text-sidebar-foreground truncate">{user.email}</p>
                 </div>
                 <ChevronDown className={cn(
-                  "w-4 h-4 text-sidebar-foreground transition-transform",
+                  "w-4 h-4 text-sidebar-foreground transition-transform duration-200",
                   userMenuOpen && "rotate-180"
                 )} />
               </>
             )}
           </button>
           {userMenuOpen && !collapsed && (
-            <div className="mt-2 space-y-1">
+            <div className="mt-2 space-y-1 animate-fade-in">
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent rounded-lg transition-colors"
+                className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive rounded-lg transition-all duration-200"
               >
                 <LogOut className="w-4 h-4" />
                 Sign Out
@@ -150,9 +157,12 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
         {navigation.map((section, sectionIdx) => (
           <div key={sectionIdx} className={cn(sectionIdx > 0 && "mt-6")}>
             {section.label && !collapsed && (
-              <p className="px-3 mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <p className="px-3 mb-3 text-[10px] font-bold text-sidebar-foreground/50 uppercase tracking-widest">
                 {section.label}
               </p>
+            )}
+            {collapsed && sectionIdx > 0 && (
+              <div className="mx-3 mb-3 border-t border-sidebar-border" />
             )}
             <div className="space-y-1">
               {section.items.map((item) => {
@@ -162,13 +172,16 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
                     key={item.href}
                     to={item.href}
                     className={cn(
-                      "nav-item",
+                      "nav-item group",
                       isActive && "nav-item-active",
                       collapsed && "justify-center px-2"
                     )}
                     title={collapsed ? item.label : undefined}
                   >
-                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    <item.icon className={cn(
+                      "w-5 h-5 flex-shrink-0 transition-colors",
+                      isActive ? "text-primary" : "group-hover:text-primary"
+                    )} />
                     {!collapsed && <span>{item.label}</span>}
                   </Link>
                 );
@@ -183,15 +196,15 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
         <button
           onClick={() => onCollapse?.(!collapsed)}
           className={cn(
-            "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors",
+            "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200",
             collapsed && "justify-center"
           )}
         >
           <ChevronLeft className={cn(
-            "w-5 h-5 transition-transform",
+            "w-5 h-5 transition-transform duration-300",
             collapsed && "rotate-180"
           )} />
-          {!collapsed && <span>Collapse</span>}
+          {!collapsed && <span className="font-medium">Collapse</span>}
         </button>
       </div>
     </aside>

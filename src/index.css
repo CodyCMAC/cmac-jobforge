@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,111 +6,120 @@
 
 @layer base {
   :root {
-    /* CMAC JobForge Design System - CMAC Brand Colors */
-    /* Brand: Black #000000, White #FFFFFF, CMAC Red #ED2C29 */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 0%;
+    /* CMAC JobForge - Industrial Modern Design System */
+    /* Deep charcoal base with warm copper/amber accents */
+    
+    --background: 30 10% 96%;
+    --foreground: 30 15% 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card: 30 15% 99%;
+    --card-foreground: 30 15% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover: 30 15% 99%;
+    --popover-foreground: 30 15% 10%;
 
-    /* Primary - CMAC Red #ED2C29 = hsl(1, 84%, 55%) */
-    --primary: 1 84% 55%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary - Rich Copper/Amber */
+    --primary: 25 95% 53%;
+    --primary-foreground: 30 15% 5%;
 
-    /* Secondary - Light Gray */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    /* Secondary - Warm Stone */
+    --secondary: 30 8% 88%;
+    --secondary-foreground: 30 15% 15%;
 
-    /* Muted - Subtle Gray */
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    /* Muted - Subtle Warm Gray */
+    --muted: 30 6% 92%;
+    --muted-foreground: 30 10% 45%;
 
-    /* Accent - Light Red tint */
-    --accent: 1 84% 97%;
-    --accent-foreground: 1 84% 45%;
+    /* Accent - Light Copper Tint */
+    --accent: 25 80% 95%;
+    --accent-foreground: 25 90% 35%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 1 84% 55%;
+    --border: 30 10% 85%;
+    --input: 30 10% 85%;
+    --ring: 25 95% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Custom CMAC Colors */
-    --success: 142 71% 45%;
+    /* Status Colors */
+    --success: 158 64% 40%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --info: 199 89% 48%;
+    --warning-foreground: 38 92% 10%;
+    --info: 200 98% 39%;
     --info-foreground: 0 0% 100%;
 
-    /* Pipeline Stage Colors */
-    --stage-new: 1 84% 55%;
-    --stage-scheduled: 199 89% 48%;
-    --stage-sent: 262 83% 58%;
-    --stage-signed: 142 71% 45%;
+    /* Pipeline Stage Colors - Vibrant but cohesive */
+    --stage-new: 25 95% 53%;
+    --stage-scheduled: 200 98% 39%;
+    --stage-sent: 280 67% 55%;
+    --stage-signed: 158 64% 40%;
     --stage-production: 38 92% 50%;
-    --stage-complete: 160 84% 39%;
+    --stage-complete: 165 80% 35%;
 
-    /* Sidebar - Dark theme for contrast */
-    --sidebar-background: 0 0% 0%;
-    --sidebar-foreground: 0 0% 70%;
-    --sidebar-primary: 1 84% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 12%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 1 84% 55%;
+    /* Sidebar - Deep Charcoal */
+    --sidebar-background: 30 15% 8%;
+    --sidebar-foreground: 30 10% 60%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 30 15% 5%;
+    --sidebar-accent: 30 12% 15%;
+    --sidebar-accent-foreground: 30 10% 95%;
+    --sidebar-border: 30 12% 18%;
+    --sidebar-ring: 25 95% 53%;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    /* Enhanced Shadows - Warm tones */
+    --shadow-sm: 0 1px 2px 0 hsl(30 15% 10% / 0.04);
+    --shadow-md: 0 4px 12px -2px hsl(30 15% 10% / 0.08), 0 2px 6px -2px hsl(30 15% 10% / 0.04);
+    --shadow-lg: 0 12px 24px -4px hsl(30 15% 10% / 0.12), 0 6px 12px -6px hsl(30 15% 10% / 0.08);
+    --shadow-glow: 0 0 20px hsl(25 95% 53% / 0.15);
   }
 
   .dark {
-    --background: 222 47% 5%;
-    --foreground: 210 40% 98%;
+    --background: 30 15% 6%;
+    --foreground: 30 10% 92%;
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 30 15% 10%;
+    --card-foreground: 30 10% 92%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 30 15% 10%;
+    --popover-foreground: 30 10% 92%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary - Glowing Copper */
+    --primary: 25 95% 58%;
+    --primary-foreground: 30 15% 5%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 30 12% 18%;
+    --secondary-foreground: 30 10% 92%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 30 12% 15%;
+    --muted-foreground: 30 10% 55%;
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 30 15% 18%;
+    --accent-foreground: 25 90% 65%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 212 27% 84%;
+    --border: 30 12% 18%;
+    --input: 30 12% 18%;
+    --ring: 25 95% 58%;
 
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 215 20% 65%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 217 91% 60%;
+    /* Dark mode sidebar - Even deeper */
+    --sidebar-background: 30 15% 4%;
+    --sidebar-foreground: 30 10% 55%;
+    --sidebar-primary: 25 95% 58%;
+    --sidebar-primary-foreground: 30 15% 5%;
+    --sidebar-accent: 30 15% 12%;
+    --sidebar-accent-foreground: 30 10% 92%;
+    --sidebar-border: 30 12% 14%;
+    --sidebar-ring: 25 95% 58%;
+
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.3), 0 2px 6px -2px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 12px 24px -4px hsl(0 0% 0% / 0.4), 0 6px 12px -6px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 30px hsl(25 95% 58% / 0.2);
   }
 }
 
@@ -120,106 +129,223 @@
   }
 
   html {
-    font-family: 'Wix Madefor Display', system-ui, sans-serif;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings: "ss01" 1, "cv01" 1;
+  }
+
+  /* Custom selection color */
+  ::selection {
+    background-color: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
   }
 }
 
 @layer components {
-  /* Card with hover effect */
+  /* Elevated Card with subtle gradient */
   .card-interactive {
-    @apply bg-card rounded-lg border border-border shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary/20;
+    @apply bg-card rounded-xl border border-border shadow-md transition-all duration-300;
+    background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(var(--card) / 0.8) 100%);
+  }
+  
+  .card-interactive:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.3);
   }
 
-  /* Stat card styling */
+  /* Stat card - Premium feel with inner glow */
   .stat-card {
-    @apply bg-card rounded-lg border border-border p-5 transition-all duration-200 hover:border-primary/20;
+    @apply relative bg-card rounded-xl border border-border p-6 transition-all duration-300 overflow-hidden;
+  }
+  
+  .stat-card::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: radial-gradient(ellipse at top left, hsl(var(--primary) / 0.08) 0%, transparent 60%);
+  }
+  
+  .stat-card:hover::before {
+    @apply opacity-100;
+  }
+  
+  .stat-card:hover {
+    @apply shadow-lg;
+    border-color: hsl(var(--primary) / 0.25);
   }
 
-  /* Kanban column */
+  /* Kanban column - Frosted glass effect */
   .kanban-column {
-    @apply bg-muted/50 rounded-lg p-3 min-w-[280px] max-w-[320px] flex-shrink-0;
+    @apply rounded-xl p-4 min-w-[300px] max-w-[340px] flex-shrink-0;
+    background: hsl(var(--muted) / 0.6);
+    backdrop-filter: blur(8px);
   }
 
-  /* Kanban card */
+  /* Kanban card - Clean with accent border on hover */
   .kanban-card {
-    @apply bg-card rounded-lg border border-border p-4 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/30;
+    @apply bg-card rounded-lg border border-border p-4 cursor-pointer transition-all duration-200;
+  }
+  
+  .kanban-card:hover {
+    @apply shadow-md;
+    border-left: 3px solid hsl(var(--primary));
+    transform: translateX(2px);
   }
 
-  /* Navigation item */
+  /* Navigation item - Refined hover states */
   .nav-item {
-    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground;
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground transition-all duration-200;
+  }
+  
+  .nav-item:hover {
+    @apply bg-sidebar-accent text-sidebar-accent-foreground;
   }
 
   .nav-item-active {
-    @apply bg-accent text-accent-foreground;
+    @apply bg-sidebar-accent text-sidebar-accent-foreground;
+    box-shadow: inset 3px 0 0 hsl(var(--sidebar-primary));
   }
 
-  /* Badge variants */
+  /* Badge variants - More refined */
   .badge-success {
-    @apply bg-success/10 text-success border-success/20;
+    @apply bg-success/15 text-success border border-success/25;
   }
 
   .badge-warning {
-    @apply bg-warning/10 text-warning border-warning/20;
+    @apply bg-warning/15 text-warning border border-warning/25;
   }
 
   .badge-info {
-    @apply bg-info/10 text-info border-info/20;
+    @apply bg-info/15 text-info border border-info/25;
   }
 
-  /* Stage indicators */
+  /* Stage indicators with subtle glow */
   .stage-new {
-    @apply bg-[hsl(var(--stage-new))] text-primary-foreground;
+    @apply bg-[hsl(var(--stage-new))] text-primary-foreground font-semibold;
+    box-shadow: 0 2px 8px hsl(var(--stage-new) / 0.3);
   }
 
   .stage-scheduled {
-    @apply bg-[hsl(var(--stage-scheduled))] text-primary-foreground;
+    @apply bg-[hsl(var(--stage-scheduled))] text-white font-semibold;
+    box-shadow: 0 2px 8px hsl(var(--stage-scheduled) / 0.3);
   }
 
   .stage-sent {
-    @apply bg-[hsl(var(--stage-sent))] text-primary-foreground;
+    @apply bg-[hsl(var(--stage-sent))] text-white font-semibold;
+    box-shadow: 0 2px 8px hsl(var(--stage-sent) / 0.3);
   }
 
   .stage-signed {
-    @apply bg-[hsl(var(--stage-signed))] text-primary-foreground;
+    @apply bg-[hsl(var(--stage-signed))] text-white font-semibold;
+    box-shadow: 0 2px 8px hsl(var(--stage-signed) / 0.3);
   }
 
   .stage-production {
-    @apply bg-[hsl(var(--stage-production))] text-primary-foreground;
+    @apply bg-[hsl(var(--stage-production))] text-warning-foreground font-semibold;
+    box-shadow: 0 2px 8px hsl(var(--stage-production) / 0.3);
   }
 
   .stage-complete {
-    @apply bg-[hsl(var(--stage-complete))] text-primary-foreground;
+    @apply bg-[hsl(var(--stage-complete))] text-white font-semibold;
+    box-shadow: 0 2px 8px hsl(var(--stage-complete) / 0.3);
+  }
+
+  /* Premium Input styling */
+  .input-premium {
+    @apply bg-background border-2 border-border rounded-lg transition-all duration-200;
+  }
+  
+  .input-premium:focus {
+    @apply border-primary ring-2 ring-primary/20;
+  }
+
+  /* Gradient text utility */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text text-transparent;
+  }
+
+  /* Glass effect for overlays */
+  .glass {
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Animated border gradient */
+  .border-gradient {
+    position: relative;
+  }
+  
+  .border-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.2) 50%, hsl(var(--primary)) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
 }
 
 @layer utilities {
-  /* Smooth scrolling for Kanban */
+  /* Premium scrollbar */
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--border)) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
     background: transparent;
+    border-radius: 4px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--border));
-    border-radius: 3px;
+    background: hsl(var(--border));
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--muted-foreground));
+    background: hsl(var(--primary) / 0.5);
+    background-clip: content-box;
+  }
+
+  /* Smooth focus transition */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Subtle pattern background */
+  .pattern-grid {
+    background-image: 
+      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Noise texture overlay */
+  .noise {
+    position: relative;
+  }
+  
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.015;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 }

@@ -62,62 +62,75 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 pattern-grid relative overflow-hidden">
+      {/* Decorative gradient orbs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+      
+      <Card className="w-full max-w-md relative z-10 border-border/50 shadow-lg">
+        <CardHeader className="text-center space-y-6 pb-2">
           <div className="flex justify-center">
-            <img src={cmacLogo} alt="CMAC Roofing" className="h-12 object-contain" />
+            <div className="p-3 rounded-2xl bg-sidebar shadow-lg">
+              <img src={cmacLogo} alt="CMAC Roofing" className="h-10 object-contain invert" />
+            </div>
           </div>
-          <div>
-            <CardTitle className="text-2xl font-bold">
-              {isLogin ? "Welcome back" : "Create an account"}
+          <div className="space-y-2">
+            <CardTitle className="text-3xl font-bold tracking-tight">
+              {isLogin ? "Welcome back" : "Get started"}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-base">
               {isLogin
-                ? "Sign in to access CMAC JobForge"
-                : "Sign up to get started with CMAC JobForge"}
+                ? "Sign in to your JobForge account"
+                : "Create your JobForge account"}
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="pt-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-semibold">Email address</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="you@company.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-12"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-semibold">Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
+                className="h-12"
               />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : isLogin ? "Sign In" : "Sign Up"}
+            <Button type="submit" className="w-full h-12 text-base" disabled={loading}>
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  Processing...
+                </span>
+              ) : isLogin ? "Sign In" : "Create Account"}
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm">
+          <div className="mt-6 text-center">
             <span className="text-muted-foreground">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              {isLogin ? "New to JobForge? " : "Already have an account? "}
             </span>
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-primary hover:underline font-medium"
+              className="text-primary hover:text-primary/80 font-semibold transition-colors"
             >
-              {isLogin ? "Sign up" : "Sign in"}
+              {isLogin ? "Create an account" : "Sign in"}
             </button>
           </div>
         </CardContent>
