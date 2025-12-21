@@ -18,12 +18,14 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronDown,
-  Settings,
   LogOut
 } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import cmacLogo from "@/assets/cmac-logo.png";
+import cmacIcon from "@/assets/cmac-icon.png";
 
 interface NavSection {
   label?: string;
@@ -77,7 +79,14 @@ interface AppSidebarProps {
 
 export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   return (
     <aside
@@ -86,29 +95,57 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
         collapsed ? "w-16" : "w-60"
       )}
     >
-      {/* Header */}
+      {/* Header with Logo */}
       <div className="h-16 flex items-center px-4 border-b border-sidebar-border">
-        <button
-          onClick={() => setUserMenuOpen(!userMenuOpen)}
-          className="flex items-center gap-3 w-full hover:bg-sidebar-accent rounded-lg p-2 transition-colors"
-        >
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-            <span className="text-primary-foreground font-bold text-sm">C</span>
-          </div>
-          {!collapsed && (
-            <>
-              <div className="flex-1 text-left">
-                <p className="font-semibold text-sm text-foreground">CMAC Roofing</p>
-                <p className="text-xs text-muted-foreground truncate">admin@cmacroofing.com</p>
-              </div>
-              <ChevronDown className={cn(
-                "w-4 h-4 text-muted-foreground transition-transform",
-                userMenuOpen && "rotate-180"
-              )} />
-            </>
-          )}
-        </button>
+        <Link to="/" className="flex items-center gap-3 w-full">
+          <img 
+            src={collapsed ? cmacIcon : cmacLogo} 
+            alt="CMAC Roofing" 
+            className={cn(
+              "object-contain invert",
+              collapsed ? "h-8 w-8" : "h-8"
+            )}
+          />
+        </Link>
       </div>
+
+      {/* User Info */}
+      {user && (
+        <div className="px-3 py-3 border-b border-sidebar-border">
+          <button
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className="flex items-center gap-3 w-full hover:bg-sidebar-accent rounded-lg p-2 transition-colors"
+          >
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+              <span className="text-primary-foreground font-bold text-sm">
+                {user.email?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            {!collapsed && (
+              <>
+                <div className="flex-1 text-left">
+                  <p className="text-xs text-sidebar-foreground truncate">{user.email}</p>
+                </div>
+                <ChevronDown className={cn(
+                  "w-4 h-4 text-sidebar-foreground transition-transform",
+                  userMenuOpen && "rotate-180"
+                )} />
+              </>
+            )}
+          </button>
+          {userMenuOpen && !collapsed && (
+            <div className="mt-2 space-y-1">
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 scrollbar-thin">
