@@ -4,13 +4,7 @@ import { ChevronLeft, ChevronRight, Plus, Settings, Check } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-
-const eventTypeColors = {
-  sales: "bg-primary/10 text-primary",
-  production: "bg-success/10 text-success",
-  dropoff: "bg-warning/10 text-warning",
-  other: "bg-muted text-muted-foreground",
-};
+import { CreateEventDialog, ViewModeDropdown } from "@/components/calendar";
 
 const eventTypeLegend = [
   { type: "sales", label: "Sales", color: "bg-primary" },
@@ -63,6 +57,10 @@ function generateCalendarDays(year: number, month: number) {
 
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [viewMode, setViewMode] = useState<"monthly" | "weekly" | "daily">("monthly");
+  const [showEventDialog, setShowEventDialog] = useState(false);
+  const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>(["Cody Viveiros"]);
+  
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   
@@ -75,6 +73,24 @@ export default function CalendarPage() {
 
   const handleSyncGoogleCalendar = () => {
     toast.info("Google Calendar sync requires API configuration. Add your Google API credentials to connect.");
+  };
+
+  const handleSettings = () => {
+    toast.info("Calendar settings coming soon");
+  };
+
+  const handleSelectAll = () => {
+    if (selectedTeamMembers.length === teamMembers.length) {
+      setSelectedTeamMembers([]);
+    } else {
+      setSelectedTeamMembers(teamMembers.map(m => m.name));
+    }
+  };
+
+  const toggleTeamMember = (name: string) => {
+    setSelectedTeamMembers(prev => 
+      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+    );
   };
 
   return (
@@ -110,14 +126,11 @@ export default function CalendarPage() {
               </svg>
               Sync Google Calendar
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={handleSettings}>
               <Settings className="w-4 h-4" />
             </Button>
-            <Button variant="outline" className="gap-2">
-              Monthly
-              <ChevronLeft className="w-4 h-4 rotate-[-90deg]" />
-            </Button>
-            <Button className="gap-2">
+            <ViewModeDropdown value={viewMode} onChange={setViewMode} />
+            <Button className="gap-2" onClick={() => setShowEventDialog(true)}>
               <Plus className="w-4 h-4" />
               Event
             </Button>
@@ -143,10 +156,15 @@ export default function CalendarPage() {
                   <div
                     key={idx}
                     className={cn(
-                      "min-h-[120px] p-2 border-b border-r border-border",
+                      "min-h-[120px] p-2 border-b border-r border-border cursor-pointer hover:bg-muted/30 transition-colors",
                       !day.isCurrentMonth && "bg-muted/30",
                       idx % 7 === 6 && "border-r-0"
                     )}
+                    onClick={() => {
+                      if (day.isCurrentMonth) {
+                        setShowEventDialog(true);
+                      }
+                    }}
                   >
                     <span className={cn(
                       "inline-flex items-center justify-center w-7 h-7 text-sm rounded-full mb-1",
@@ -173,6 +191,11 @@ export default function CalendarPage() {
                 {calendarDays.slice(0, 35).map((day, idx) => (
                   <button
                     key={idx}
+                    onClick={() => {
+                      if (day.isCurrentMonth) {
+                        setCurrentDate(new Date(year, month, day.date));
+                      }
+                    }}
                     className={cn(
                       "text-xs py-1 rounded hover:bg-accent",
                       day.isToday && "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -189,10 +212,13 @@ export default function CalendarPage() {
             <div className="bg-card rounded-lg border border-border p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-foreground">Team</h3>
-                <button className="text-xs text-primary hover:underline flex items-center gap-1">
+                <button 
+                  onClick={handleSelectAll}
+                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                >
                   <Check className="w-3 h-3" />
-                  Select all
-                  <span className="text-muted-foreground">1 selected</span>
+                  {selectedTeamMembers.length === teamMembers.length ? "Deselect all" : "Select all"}
+                  <span className="text-muted-foreground">{selectedTeamMembers.length} selected</span>
                 </button>
               </div>
               <div className="space-y-2">
@@ -200,7 +226,8 @@ export default function CalendarPage() {
                   <label key={member.name} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      defaultChecked={member.selected}
+                      checked={selectedTeamMembers.includes(member.name)}
+                      onChange={() => toggleTeamMember(member.name)}
                       className="rounded border-border text-primary focus:ring-primary"
                     />
                     <span className="text-sm text-foreground">{member.name}</span>
@@ -227,6 +254,8 @@ export default function CalendarPage() {
           </div>
         </div>
       </div>
+
+      <CreateEventDialog open={showEventDialog} onOpenChange={setShowEventDialog} />
     </MainLayout>
   );
 }
