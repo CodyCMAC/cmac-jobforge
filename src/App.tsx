@@ -9,6 +9,7 @@ import Jobs from "./pages/Jobs";
 import CalendarPage from "./pages/Calendar";
 import Performance from "./pages/Performance";
 import InstantEstimator from "./pages/InstantEstimator";
+import InstantEstimatorDetail from "./pages/InstantEstimatorDetail";
 import Measurements from "./pages/Measurements";
 import Proposals from "./pages/Proposals";
 import MaterialOrders from "./pages/MaterialOrders";
@@ -71,6 +72,7 @@ const AppRoutes = () => (
     <Route path="/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
     <Route path="/performance" element={<ProtectedRoute><Performance /></ProtectedRoute>} />
     <Route path="/instant-estimator" element={<ProtectedRoute><InstantEstimator /></ProtectedRoute>} />
+    <Route path="/instant-estimator/:id" element={<ProtectedRoute><InstantEstimatorDetail /></ProtectedRoute>} />
     <Route path="/measurements" element={<ProtectedRoute><Measurements /></ProtectedRoute>} />
     <Route path="/proposals" element={<ProtectedRoute><Proposals /></ProtectedRoute>} />
     <Route path="/material-orders" element={<ProtectedRoute><MaterialOrders /></ProtectedRoute>} />

@@ -47,6 +47,220 @@ export type Database = {
         }
         Relationships: []
       }
+      estimator_leads: {
+        Row: {
+          address: string
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          estimate_type: string
+          estimated_price: number | null
+          estimated_sqft: number | null
+          estimator_id: string
+          id: string
+          questionnaire_responses: Json | null
+          selected_material_id: string | null
+          status: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          estimate_type: string
+          estimated_price?: number | null
+          estimated_sqft?: number | null
+          estimator_id: string
+          id?: string
+          questionnaire_responses?: Json | null
+          selected_material_id?: string | null
+          status?: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          estimate_type?: string
+          estimated_price?: number | null
+          estimated_sqft?: number | null
+          estimator_id?: string
+          id?: string
+          questionnaire_responses?: Json | null
+          selected_material_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estimator_leads_estimator_id_fkey"
+            columns: ["estimator_id"]
+            isOneToOne: false
+            referencedRelation: "instant_estimators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estimator_leads_selected_material_id_fkey"
+            columns: ["selected_material_id"]
+            isOneToOne: false
+            referencedRelation: "estimator_materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estimator_materials: {
+        Row: {
+          created_at: string
+          description: string | null
+          estimator_id: string
+          id: string
+          is_default: boolean
+          name: string
+          price_per_unit: number
+          unit_type: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          estimator_id: string
+          id?: string
+          is_default?: boolean
+          name: string
+          price_per_unit?: number
+          unit_type?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          estimator_id?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          price_per_unit?: number
+          unit_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estimator_materials_estimator_id_fkey"
+            columns: ["estimator_id"]
+            isOneToOne: false
+            referencedRelation: "instant_estimators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estimator_questions: {
+        Row: {
+          created_at: string
+          estimator_id: string
+          id: string
+          is_required: boolean
+          options: Json | null
+          question_text: string
+          question_type: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          estimator_id: string
+          id?: string
+          is_required?: boolean
+          options?: Json | null
+          question_text: string
+          question_type?: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          estimator_id?: string
+          id?: string
+          is_required?: boolean
+          options?: Json | null
+          question_text?: string
+          question_type?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estimator_questions_estimator_id_fkey"
+            columns: ["estimator_id"]
+            isOneToOne: false
+            referencedRelation: "instant_estimators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instant_estimators: {
+        Row: {
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          default_assignee: string | null
+          estimate_type: string
+          financing_link: string | null
+          id: string
+          is_active: boolean
+          name: string
+          pricing_unit: string
+          require_email: boolean
+          require_phone: boolean
+          scheduling_link: string | null
+          show_financing: boolean
+          show_price_range: boolean
+          show_project_showcase: boolean
+          show_social_links: boolean
+          slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          default_assignee?: string | null
+          estimate_type?: string
+          financing_link?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          pricing_unit?: string
+          require_email?: boolean
+          require_phone?: boolean
+          scheduling_link?: string | null
+          show_financing?: boolean
+          show_price_range?: boolean
+          show_project_showcase?: boolean
+          show_social_links?: boolean
+          slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          default_assignee?: string | null
+          estimate_type?: string
+          financing_link?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          pricing_unit?: string
+          require_email?: boolean
+          require_phone?: boolean
+          scheduling_link?: string | null
+          show_financing?: boolean
+          show_price_range?: boolean
+          show_project_showcase?: boolean
+          show_social_links?: boolean
+          slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           address: string
