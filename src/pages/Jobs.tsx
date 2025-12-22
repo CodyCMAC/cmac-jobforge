@@ -1,12 +1,15 @@
 import { MainLayout } from "@/components/layout";
 import { PipelineBoard, PipelineStage } from "@/components/jobs";
+import { CreateJobDialog } from "@/components/jobs/CreateJobDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, ChevronDown, Search, Filter, Grid3X3, List } from "lucide-react";
+import { Plus, ChevronDown, Search, Filter, Grid3X3, List, Check } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useJobs } from "@/hooks/useJobs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 type ViewMode = "board" | "list";
 type WorkflowType = "sales" | "production";
@@ -15,6 +18,8 @@ export default function Jobs() {
   const [viewMode, setViewMode] = useState<ViewMode>("board");
   const [workflow, setWorkflow] = useState<WorkflowType>("sales");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [workflowFilter, setWorkflowFilter] = useState<string | null>(null);
   
   const { data: jobs = [], isLoading } = useJobs();
 
@@ -75,6 +80,10 @@ export default function Jobs() {
 
   const stages = workflow === "sales" ? salesPipelineStages : productionPipelineStages;
 
+  const handleOpenSettings = () => {
+    toast.info("Settings page coming soon");
+  };
+
   return (
     <MainLayout>
       <div className="animate-fade-in">
@@ -104,6 +113,7 @@ export default function Jobs() {
               List view
             </button>
             <button
+              onClick={handleOpenSettings}
               className="pb-3 text-sm font-medium text-muted-foreground hover:text-foreground border-b-2 border-transparent transition-colors"
             >
               Settings
@@ -123,14 +133,47 @@ export default function Jobs() {
             />
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="gap-2">
-              All workflows
-              <ChevronDown className="w-4 h-4" />
-            </Button>
-            <Button variant="outline" className="gap-2">
-              <Filter className="w-4 h-4" />
-              Filters & sort
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  {workflowFilter || "All workflows"}
+                  <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setWorkflowFilter(null)} className="flex items-center justify-between">
+                  All workflows
+                  {!workflowFilter && <Check className="w-4 h-4 ml-2" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setWorkflowFilter("Sales")} className="flex items-center justify-between">
+                  Sales
+                  {workflowFilter === "Sales" && <Check className="w-4 h-4 ml-2" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setWorkflowFilter("Production")} className="flex items-center justify-between">
+                  Production
+                  {workflowFilter === "Production" && <Check className="w-4 h-4 ml-2" />}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Filter className="w-4 h-4" />
+                  Filters & sort
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => toast.info("Sort by date")}>
+                  Sort by Date
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.info("Sort by value")}>
+                  Sort by Value
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toast.info("Sort by customer")}>
+                  Sort by Customer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div className="flex items-center border border-border rounded-lg p-1">
               <button
                 onClick={() => setViewMode("board")}
@@ -151,10 +194,9 @@ export default function Jobs() {
                 <List className="w-4 h-4" />
               </button>
             </div>
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => setShowCreateDialog(true)}>
               <Plus className="w-4 h-4" />
               New
-              <ChevronDown className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -170,6 +212,8 @@ export default function Jobs() {
           <PipelineBoard stages={stages} />
         )}
       </div>
+
+      <CreateJobDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
     </MainLayout>
   );
 }

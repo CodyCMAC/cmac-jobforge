@@ -1,7 +1,8 @@
 import { MainLayout, PageHeader } from "@/components/layout";
 import { StatCard, DashboardCalendar } from "@/components/dashboard";
-import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown, Users, FileText, Eye, Receipt } from "lucide-react";
+import { NewItemDropdown } from "@/components/dashboard/NewItemDropdown";
+import { UserDropdown } from "@/components/dashboard/UserDropdown";
+import { Users, FileText, Eye, Receipt } from "lucide-react";
 
 const stats = [
   {
@@ -45,15 +46,8 @@ export default function Dashboard() {
             <span className="text-3xl">👋</span> Hi {userName}, welcome home
           </h1>
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="gap-2">
-              Cody Viveiros
-              <ChevronDown className="w-4 h-4" />
-            </Button>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
-              New
-              <ChevronDown className="w-4 h-4" />
-            </Button>
+            <UserDropdown userName="Cody Viveiros" />
+            <NewItemDropdown />
           </div>
         </div>
 

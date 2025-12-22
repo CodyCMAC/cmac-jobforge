@@ -1,12 +1,30 @@
 import { MainLayout, PageHeader } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Filter, MoreHorizontal } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useContacts } from "@/hooks/useContacts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState, useMemo } from "react";
+import { CreateContactDialog, ContactActionsMenu, ContactTypeFilter } from "@/components/contacts";
 
 export default function Contacts() {
   const { data: contacts = [], isLoading } = useContacts();
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
+
+  const filteredContacts = useMemo(() => {
+    return contacts.filter((contact) => {
+      const matchesSearch = !searchQuery || 
+        contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        contact.phone.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesType = !typeFilter || contact.type === typeFilter;
+      
+      return matchesSearch && matchesType;
+    });
+  }, [contacts, searchQuery, typeFilter]);
 
   return (
     <MainLayout>
@@ -14,7 +32,7 @@ export default function Contacts() {
         <PageHeader
           title="Contacts"
           actions={
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => setShowCreateDialog(true)}>
               <Plus className="w-4 h-4" />
               New contact
             </Button>
@@ -29,12 +47,11 @@ export default function Contacts() {
               <Input
                 placeholder="Search by name, email, phone"
                 className="pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline" className="gap-2">
-              <Filter className="w-4 h-4" />
-              Type
-            </Button>
+            <ContactTypeFilter value={typeFilter} onChange={setTypeFilter} />
           </div>
         </div>
 
@@ -75,14 +92,14 @@ export default function Contacts() {
                       </td>
                     </tr>
                   ))
-                ) : contacts.length === 0 ? (
+                ) : filteredContacts.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
-                      No contacts found
+                      {contacts.length === 0 ? "No contacts found. Create your first contact!" : "No contacts match your search."}
                     </td>
                   </tr>
                 ) : (
-                  contacts.map((contact) => (
+                  filteredContacts.map((contact) => (
                     <tr key={contact.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3 text-sm font-medium text-foreground">{contact.name}</td>
                       <td className="px-4 py-3">
@@ -96,9 +113,7 @@ export default function Contacts() {
                       <td className="px-4 py-3 text-sm text-foreground">{contact.job}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">{contact.createdAt}</td>
                       <td className="px-4 py-3">
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
+                        <ContactActionsMenu contact={contact} />
                       </td>
                     </tr>
                   ))
@@ -108,6 +123,8 @@ export default function Contacts() {
           </div>
         </div>
       </div>
+
+      <CreateContactDialog open={showCreateDialog} onOpenChange={setShowCreateDialog} />
     </MainLayout>
   );
 }
