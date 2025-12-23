@@ -66,9 +66,14 @@ export default function Auth() {
       if (isLogin) {
         const { error } = await signIn(cleanedEmail, password);
         if (error) {
+          const description =
+            error.message === "Invalid login credentials"
+              ? `Email or password is incorrect. Please verify the email address (we received: ${cleanedEmail}). If you're unsure, click “Forgot password?” to set a new one.`
+              : error.message;
+
           toast({
             title: "Login failed",
-            description: error.message,
+            description,
             variant: "destructive",
           });
         } else {
@@ -247,6 +252,9 @@ export default function Auth() {
                       required
                       className="h-12"
                       autoComplete="email"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
                     />
                   </div>
 
@@ -276,6 +284,9 @@ export default function Auth() {
                       minLength={6}
                       className="h-12"
                       autoComplete={isLogin ? "current-password" : "new-password"}
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
                     />
                   </div>
 
