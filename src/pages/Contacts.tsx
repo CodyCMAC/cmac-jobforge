@@ -75,7 +75,8 @@ export default function Contacts() {
                   </th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">Email</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">Phone</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">Job</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">Address</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">Notes</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground">
                     Created
                     <span className="ml-1 opacity-50">↕</span>
@@ -87,14 +88,14 @@ export default function Contacts() {
                 {isLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
                     <tr key={i} className="border-b border-border">
-                      <td colSpan={8} className="px-4 py-3">
+                      <td colSpan={9} className="px-4 py-3">
                         <Skeleton className="h-6 w-full" />
                       </td>
                     </tr>
                   ))
                 ) : filteredContacts.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                    <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
                       {contacts.length === 0 ? "No contacts found. Create your first contact!" : "No contacts match your search."}
                     </td>
                   </tr>
@@ -104,13 +105,14 @@ export default function Contacts() {
                       <td className="px-4 py-3 text-sm font-medium text-foreground">{contact.name}</td>
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-muted text-muted-foreground">
-                          {contact.type === "Crew" ? "👷" : "👤"} {contact.type}
+                          {contact.type === "Lead" ? "🎯" : contact.type === "Agent" ? "🏢" : "👤"} {contact.type}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">{contact.label || "-"}</td>
                       <td className="px-4 py-3 text-sm text-foreground">{contact.email}</td>
                       <td className="px-4 py-3 text-sm text-foreground">{contact.phone}</td>
-                      <td className="px-4 py-3 text-sm text-foreground">{contact.job}</td>
+                      <td className="px-4 py-3 text-sm text-foreground">{contact.address || "-"}</td>
+                      <td className="px-4 py-3 text-sm text-foreground">{contact.notes}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">{contact.createdAt}</td>
                       <td className="px-4 py-3">
                         <ContactActionsMenu contact={contact} />

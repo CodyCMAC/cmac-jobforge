@@ -20,9 +20,10 @@ export function CreateContactDialog({ open, onOpenChange }: CreateContactDialogP
     name: "",
     email: "",
     phone: "",
-    type: "Customer" as "Customer" | "Crew",
+    address: "",
+    type: "Lead" as "Lead" | "Customer" | "Agent",
     label: "",
-    job: "",
+    notes: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,9 +40,10 @@ export function CreateContactDialog({ open, onOpenChange }: CreateContactDialogP
       name: formData.name.trim(),
       email: formData.email.trim(),
       phone: formData.phone.trim() || null,
+      address: formData.address.trim() || null,
       type: formData.type,
       label: formData.label.trim() || null,
-      job: formData.job.trim() || null,
+      notes: formData.notes.trim() || null,
     });
 
     setIsSubmitting(false);
@@ -55,7 +57,7 @@ export function CreateContactDialog({ open, onOpenChange }: CreateContactDialogP
     toast.success("Contact created successfully");
     queryClient.invalidateQueries({ queryKey: ["contacts"] });
     onOpenChange(false);
-    setFormData({ name: "", email: "", phone: "", type: "Customer", label: "", job: "" });
+    setFormData({ name: "", email: "", phone: "", address: "", type: "Lead", label: "", notes: "" });
   };
 
   return (
@@ -97,17 +99,28 @@ export function CreateContactDialog({ open, onOpenChange }: CreateContactDialogP
           </div>
           
           <div className="space-y-2">
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              value={formData.address}
+              onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+              placeholder="123 Main St, City, State"
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="type">Type</Label>
             <Select
               value={formData.type}
-              onValueChange={(value: "Customer" | "Crew") => setFormData(prev => ({ ...prev, type: value }))}
+              onValueChange={(value: "Lead" | "Customer" | "Agent") => setFormData(prev => ({ ...prev, type: value }))}
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="Lead">Lead</SelectItem>
                 <SelectItem value="Customer">Customer</SelectItem>
-                <SelectItem value="Crew">Crew</SelectItem>
+                <SelectItem value="Agent">Agent</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -118,17 +131,17 @@ export function CreateContactDialog({ open, onOpenChange }: CreateContactDialogP
               id="label"
               value={formData.label}
               onChange={(e) => setFormData(prev => ({ ...prev, label: e.target.value }))}
-              placeholder="VIP, Lead, etc."
+              placeholder="VIP, Priority, etc."
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="job">Associated Job</Label>
+            <Label htmlFor="notes">Notes</Label>
             <Input
-              id="job"
-              value={formData.job}
-              onChange={(e) => setFormData(prev => ({ ...prev, job: e.target.value }))}
-              placeholder="Job name or address"
+              id="notes"
+              value={formData.notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Any additional notes..."
             />
           </div>
           
