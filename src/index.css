@@ -43,11 +43,11 @@
 
     --radius: 0.625rem;
 
-    /* Status Colors */
+    /* Status Colors - CMAC themed */
     --success: 158 64% 40%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 38 92% 10%;
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 8%;
     --info: 206 80% 50%;
     --info-foreground: 0 0% 100%;
 
