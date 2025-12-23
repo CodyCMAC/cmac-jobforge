@@ -17,12 +17,15 @@ import {
   MessageSquare,
   ChevronLeft,
   ChevronDown,
-  LogOut
+  LogOut,
+  Sun,
+  Moon
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import cmacLogo from "@/assets/cmac-logo.png";
 import cmacIcon from "@/assets/cmac-icon.png";
 
@@ -79,6 +82,7 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -191,8 +195,30 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
         ))}
       </nav>
 
-      {/* Collapse Toggle */}
-      <div className="p-3 border-t border-sidebar-border">
+      {/* Theme Toggle & Collapse */}
+      <div className="p-3 border-t border-sidebar-border space-y-2">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200",
+            collapsed && "justify-center"
+          )}
+          title={collapsed ? (theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode") : undefined}
+        >
+          {theme === "light" ? (
+            <Moon className="w-5 h-5" />
+          ) : (
+            <Sun className="w-5 h-5" />
+          )}
+          {!collapsed && (
+            <span className="font-medium">
+              {theme === "light" ? "Dark Mode" : "Light Mode"}
+            </span>
+          )}
+        </button>
+
+        {/* Collapse Toggle */}
         <button
           onClick={() => onCollapse?.(!collapsed)}
           className={cn(
