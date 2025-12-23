@@ -55,7 +55,7 @@ export function JobProposalsSection({ jobId, proposals }: JobProposalsSectionPro
               <div>
                 <p className="font-medium">{proposal.title}</p>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>Moved to {proposal.status} by Jason Gamez</span>
+                  <span>Moved to {proposal.status}</span>
                   <span>• {format(new Date(proposal.updated_at), "MMM d, h:mm a")}</span>
                   <button className="text-primary hover:underline">
                     <ChevronDown className="h-3 w-3 inline" />

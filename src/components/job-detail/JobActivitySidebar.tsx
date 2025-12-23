@@ -40,6 +40,22 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
     const [noteDialogOpen, setNoteDialogOpen] = useState(false);
     const [noteText, setNoteText] = useState("");
 
+    const handleEmail = () => {
+      if (job.customerEmail) {
+        window.location.href = `mailto:${job.customerEmail}`;
+        return;
+      }
+      toast.error("No email address on this job");
+    };
+
+    const handleCall = () => {
+      if (job.customerPhone) {
+        window.location.href = `tel:${job.customerPhone}`;
+        return;
+      }
+      toast.error("No phone number on this job");
+    };
+
     const getActivityIcon = (type: string) => {
       switch (type) {
         case "email":
@@ -81,13 +97,31 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
               <Star className="h-4 w-4 text-warning fill-warning" />
             </div>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleEmail}
+                aria-label="Email customer"
+              >
                 <Mail className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleCall}
+                aria-label="Call customer"
+              >
                 <Phone className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => toast.info("More actions coming soon")}
+                aria-label="More actions"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </div>
@@ -98,7 +132,13 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
             <div className="flex items-center justify-between">
               <span className="font-medium">Ateam</span>
               <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" className="h-6 w-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => toast.info("Contact details coming soon")}
+                  aria-label="Open contact"
+                >
                   <svg
                     className="h-3 w-3"
                     viewBox="0 0 24 24"
@@ -109,20 +149,43 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                   </svg>
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={handleEmail}
+                  aria-label="Email customer"
+                >
                   <Mail className="h-3 w-3" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={handleCall}
+                  aria-label="Call customer"
+                >
                   <Phone className="h-3 w-3" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => toast.info("More actions coming soon")}
+                  aria-label="More actions"
+                >
                   <MoreHorizontal className="h-3 w-3" />
                 </Button>
               </div>
             </div>
           </div>
 
-          <Button variant="outline" size="sm" className="w-full gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full gap-2"
+            onClick={() => toast.info("Add contact coming soon")}
+          >
             <Plus className="h-4 w-4" />
             Add contact
           </Button>
@@ -181,11 +244,16 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
           <Button variant="outline" size="sm" onClick={() => setNoteDialogOpen(true)}>
             Internal note
           </Button>
-          <Button variant="outline" size="sm" className="gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1"
+            onClick={() => toast.info("Inbox coming soon")}
+          >
             <Inbox className="h-3 w-3" />
             Inbox
           </Button>
-          <Button variant="outline" size="sm" className="gap-1">
+          <Button variant="outline" size="sm" className="gap-1" onClick={handleEmail}>
             Compose
             <ChevronDown className="h-3 w-3" />
           </Button>

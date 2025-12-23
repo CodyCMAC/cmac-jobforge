@@ -118,14 +118,7 @@ export const JobDetailsTab = forwardRef<HTMLDivElement, JobDetailsTabProps>(
               Job owner
               <Info className="h-3 w-3 text-muted-foreground" />
             </Label>
-            <Select defaultValue="Jason Gamez">
-              <SelectTrigger>
-                <SelectValue placeholder="Select owner" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Jason Gamez">Jason Gamez</SelectItem>
-              </SelectContent>
-            </Select>
+            <Input defaultValue={job.assignee.name} disabled aria-label="Job owner" />
           </div>
 
           {/* Workflow & Stages */}
