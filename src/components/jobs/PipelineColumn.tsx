@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Job, formatCurrency } from "./types";
 import { JobCard } from "./JobCard";
+import { useNavigate } from "react-router-dom";
 
 interface PipelineColumnProps {
   title: string;
@@ -11,6 +12,8 @@ interface PipelineColumnProps {
 }
 
 export function PipelineColumn({ title, count, totalValue, jobs, className }: PipelineColumnProps) {
+  const navigate = useNavigate();
+
   return (
     <div className={cn("kanban-column", className)}>
       {/* Column Header */}
@@ -27,7 +30,7 @@ export function PipelineColumn({ title, count, totalValue, jobs, className }: Pi
       {/* Cards */}
       <div className="space-y-0 overflow-y-auto max-h-[calc(100vh-280px)] scrollbar-thin">
         {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
+          <JobCard key={job.id} job={job} onClick={() => navigate(`/jobs/${job.id}`)} />
         ))}
         {jobs.length === 0 && (
           <div className="text-center py-8 text-sm text-muted-foreground">

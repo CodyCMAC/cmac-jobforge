@@ -11,7 +11,7 @@ export function JobCard({ job, onClick }: JobCardProps) {
 
   return (
     <div 
-      className="kanban-card mb-3 last:mb-0"
+      className="kanban-card mb-3 last:mb-0 cursor-pointer hover:shadow-md transition-shadow"
       onClick={onClick}
     >
       <div className="space-y-3">
