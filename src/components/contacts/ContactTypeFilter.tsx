@@ -10,8 +10,9 @@ interface ContactTypeFilterProps {
 export function ContactTypeFilter({ value, onChange }: ContactTypeFilterProps) {
   const options = [
     { label: "All Types", value: null },
+    { label: "Lead", value: "Lead" },
     { label: "Customer", value: "Customer" },
-    { label: "Crew", value: "Crew" },
+    { label: "Agent", value: "Agent" },
   ];
 
   return (

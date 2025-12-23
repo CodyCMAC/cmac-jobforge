@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 export interface Contact {
   id: string;
   name: string;
-  type: "Customer" | "Crew";
+  type: "Lead" | "Customer" | "Agent";
   label?: string;
   email: string;
   phone: string;
-  job: string;
+  address?: string;
+  notes: string;
   createdAt: string;
 }
 
@@ -27,11 +28,12 @@ export function useContacts() {
       const contacts: Contact[] = (data || []).map((contact) => ({
         id: contact.id,
         name: contact.name,
-        type: contact.type as "Customer" | "Crew",
+        type: contact.type as "Lead" | "Customer" | "Agent",
         label: contact.label || undefined,
         email: contact.email,
         phone: contact.phone || "-",
-        job: contact.job || "-",
+        address: contact.address || undefined,
+        notes: contact.notes || "-",
         createdAt: new Date(contact.created_at).toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
