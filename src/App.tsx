@@ -12,6 +12,7 @@ import InstantEstimator from "./pages/InstantEstimator";
 import InstantEstimatorDetail from "./pages/InstantEstimatorDetail";
 import Measurements from "./pages/Measurements";
 import Proposals from "./pages/Proposals";
+import ProposalDetail from "./pages/ProposalDetail";
 import MaterialOrders from "./pages/MaterialOrders";
 import WorkOrders from "./pages/WorkOrders";
 import Invoices from "./pages/Invoices";
@@ -75,6 +76,7 @@ const AppRoutes = () => (
     <Route path="/instant-estimator/:id" element={<ProtectedRoute><InstantEstimatorDetail /></ProtectedRoute>} />
     <Route path="/measurements" element={<ProtectedRoute><Measurements /></ProtectedRoute>} />
     <Route path="/proposals" element={<ProtectedRoute><Proposals /></ProtectedRoute>} />
+    <Route path="/proposals/:id" element={<ProtectedRoute><ProposalDetail /></ProtectedRoute>} />
     <Route path="/material-orders" element={<ProtectedRoute><MaterialOrders /></ProtectedRoute>} />
     <Route path="/work-orders" element={<ProtectedRoute><WorkOrders /></ProtectedRoute>} />
     <Route path="/invoices" element={<ProtectedRoute><Invoices /></ProtectedRoute>} />

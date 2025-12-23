@@ -309,6 +309,168 @@ export type Database = {
         }
         Relationships: []
       }
+      proposal_line_items: {
+        Row: {
+          adjustment: number
+          category: string
+          cogs: number
+          created_at: string
+          description: string | null
+          id: string
+          margin_percent: number
+          name: string
+          option_id: string
+          quantity: number
+          sales_tax_percent: number
+          sort_order: number
+          subtotal: number
+          unit_cost: number
+          waste_percent: number
+        }
+        Insert: {
+          adjustment?: number
+          category?: string
+          cogs?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          margin_percent?: number
+          name: string
+          option_id: string
+          quantity?: number
+          sales_tax_percent?: number
+          sort_order?: number
+          subtotal?: number
+          unit_cost?: number
+          waste_percent?: number
+        }
+        Update: {
+          adjustment?: number
+          category?: string
+          cogs?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          margin_percent?: number
+          name?: string
+          option_id?: string
+          quantity?: number
+          sales_tax_percent?: number
+          sort_order?: number
+          subtotal?: number
+          unit_cost?: number
+          waste_percent?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_line_items_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "proposal_options"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposal_options: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_selected: boolean
+          name: string
+          proposal_id: string
+          sort_order: number
+          subtotal: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_selected?: boolean
+          name?: string
+          proposal_id: string
+          sort_order?: number
+          subtotal?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_selected?: boolean
+          name?: string
+          proposal_id?: string
+          sort_order?: number
+          subtotal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_options_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposals: {
+        Row: {
+          contractor_signature: string
+          contractor_signed_at: string | null
+          created_at: string
+          customer_notes: string | null
+          customer_signature: string | null
+          customer_signed_at: string | null
+          id: string
+          job_id: string
+          status: string
+          subtotal: number
+          tax_amount: number
+          title: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          contractor_signature?: string
+          contractor_signed_at?: string | null
+          created_at?: string
+          customer_notes?: string | null
+          customer_signature?: string | null
+          customer_signed_at?: string | null
+          id?: string
+          job_id: string
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          title: string
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          contractor_signature?: string
+          contractor_signed_at?: string | null
+          created_at?: string
+          customer_notes?: string | null
+          customer_signature?: string | null
+          customer_signed_at?: string | null
+          id?: string
+          job_id?: string
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          title?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposals_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
