@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTeamMembers } from "@/hooks/useTeamMembers";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CreateJobDialogProps {
   open: boolean;
@@ -15,15 +17,27 @@ interface CreateJobDialogProps {
 
 export function CreateJobDialog({ open, onOpenChange }: CreateJobDialogProps) {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { data: teamMembers = [] } = useTeamMembers();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     customerName: "",
     address: "",
-    assigneeName: "",
-    assigneeInitials: "",
-    value: "",
+    assigneeId: "",
+    customerPhone: "",
+    customerEmail: "",
     status: "new",
   });
+
+  // Set default assignee to current user when dialog opens and team members load
+  useEffect(() => {
+    if (open && teamMembers.length > 0 && !formData.assigneeId) {
+      const currentUserMember = teamMembers.find(m => m.id === user?.id);
+      if (currentUserMember) {
+        setFormData(prev => ({ ...prev, assigneeId: currentUserMember.id }));
+      }
+    }
+  }, [open, teamMembers, user?.id, formData.assigneeId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,28 +47,28 @@ export function CreateJobDialog({ open, onOpenChange }: CreateJobDialogProps) {
       return;
     }
 
-    if (!formData.assigneeName.trim()) {
-      toast.error("Assignee name is required");
+    if (!formData.assigneeId) {
+      toast.error("Assignee is required");
+      return;
+    }
+
+    const selectedMember = teamMembers.find(m => m.id === formData.assigneeId);
+    if (!selectedMember) {
+      toast.error("Please select a valid assignee");
       return;
     }
 
     setIsSubmitting(true);
 
-    // Generate initials from assignee name
-    const initials = formData.assigneeName
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-
     const { error } = await supabase.from("jobs").insert({
       customer_name: formData.customerName.trim(),
       address: formData.address.trim(),
-      assignee_name: formData.assigneeName.trim(),
-      assignee_initials: initials,
-      value: parseFloat(formData.value) || 0,
+      assignee_name: selectedMember.name,
+      assignee_initials: selectedMember.initials,
+      customer_phone: formData.customerPhone.trim() || null,
+      customer_email: formData.customerEmail.trim() || null,
       status: formData.status,
+      value: 0,
     });
 
     setIsSubmitting(false);
@@ -71,15 +85,29 @@ export function CreateJobDialog({ open, onOpenChange }: CreateJobDialogProps) {
     setFormData({
       customerName: "",
       address: "",
-      assigneeName: "",
-      assigneeInitials: "",
-      value: "",
+      assigneeId: "",
+      customerPhone: "",
+      customerEmail: "",
       status: "new",
     });
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      setFormData({
+        customerName: "",
+        address: "",
+        assigneeId: "",
+        customerPhone: "",
+        customerEmail: "",
+        status: "new",
+      });
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>New Job</DialogTitle>
@@ -104,28 +132,48 @@ export function CreateJobDialog({ open, onOpenChange }: CreateJobDialogProps) {
               placeholder="123 Main St, City, State 12345"
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="assigneeName">Assignee *</Label>
-            <Input
-              id="assigneeName"
-              value={formData.assigneeName}
-              onChange={(e) => setFormData(prev => ({ ...prev, assigneeName: e.target.value }))}
-              placeholder="Team member name"
-            />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="customerPhone">Phone Number</Label>
+              <Input
+                id="customerPhone"
+                type="tel"
+                value={formData.customerPhone}
+                onChange={(e) => setFormData(prev => ({ ...prev, customerPhone: e.target.value }))}
+                placeholder="(555) 123-4567"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="customerEmail">Email</Label>
+              <Input
+                id="customerEmail"
+                type="email"
+                value={formData.customerEmail}
+                onChange={(e) => setFormData(prev => ({ ...prev, customerEmail: e.target.value }))}
+                placeholder="customer@email.com"
+              />
+            </div>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="value">Value ($)</Label>
-            <Input
-              id="value"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.value}
-              onChange={(e) => setFormData(prev => ({ ...prev, value: e.target.value }))}
-              placeholder="0.00"
-            />
+            <Label htmlFor="assignee">Assignee *</Label>
+            <Select
+              value={formData.assigneeId}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, assigneeId: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select team member" />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.name} {member.email && `(${member.email})`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="space-y-2">
@@ -149,7 +197,7 @@ export function CreateJobDialog({ open, onOpenChange }: CreateJobDialogProps) {
           </div>
           
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>

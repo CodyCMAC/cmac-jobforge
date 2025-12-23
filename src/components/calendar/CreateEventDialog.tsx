@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { useTeamMembers } from "@/hooks/useTeamMembers";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -13,14 +15,26 @@ interface CreateEventDialogProps {
 }
 
 export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps) {
+  const { user } = useAuth();
+  const { data: teamMembers = [] } = useTeamMembers();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
     time: "",
     type: "sales",
     description: "",
-    assignee: "",
+    assigneeId: "",
   });
+
+  // Set default assignee to current user when dialog opens and team members load
+  useEffect(() => {
+    if (open && teamMembers.length > 0 && !formData.assigneeId) {
+      const currentUserMember = teamMembers.find(m => m.id === user?.id);
+      if (currentUserMember) {
+        setFormData(prev => ({ ...prev, assigneeId: currentUserMember.id }));
+      }
+    }
+  }, [open, teamMembers, user?.id, formData.assigneeId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,12 +58,26 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
       time: "",
       type: "sales",
       description: "",
-      assignee: "",
+      assigneeId: "",
     });
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      setFormData({
+        title: "",
+        date: "",
+        time: "",
+        type: "sales",
+        description: "",
+        assigneeId: "",
+      });
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>New Event</DialogTitle>
@@ -107,12 +135,21 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
           
           <div className="space-y-2">
             <Label htmlFor="assignee">Assignee</Label>
-            <Input
-              id="assignee"
-              value={formData.assignee}
-              onChange={(e) => setFormData(prev => ({ ...prev, assignee: e.target.value }))}
-              placeholder="Team member name"
-            />
+            <Select
+              value={formData.assigneeId}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, assigneeId: value }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select team member" />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.name} {member.email && `(${member.email})`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="space-y-2">
@@ -127,7 +164,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
           </div>
           
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit">

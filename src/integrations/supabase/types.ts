@@ -267,7 +267,9 @@ export type Database = {
           assignee_initials: string
           assignee_name: string
           created_at: string
+          customer_email: string | null
           customer_name: string
+          customer_phone: string | null
           id: string
           proposal_status: string | null
           status: string
@@ -279,7 +281,9 @@ export type Database = {
           assignee_initials: string
           assignee_name: string
           created_at?: string
+          customer_email?: string | null
           customer_name: string
+          customer_phone?: string | null
           id?: string
           proposal_status?: string | null
           status?: string
@@ -291,7 +295,9 @@ export type Database = {
           assignee_initials?: string
           assignee_name?: string
           created_at?: string
+          customer_email?: string | null
           customer_name?: string
+          customer_phone?: string | null
           id?: string
           proposal_status?: string | null
           status?: string
