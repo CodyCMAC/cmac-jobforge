@@ -264,6 +264,88 @@ export type Database = {
         }
         Relationships: []
       }
+      job_activities: {
+        Row: {
+          body: string | null
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          id: string
+          job_id: string
+          title: string
+          type: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          id?: string
+          job_id: string
+          title: string
+          type?: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          id?: string
+          job_id?: string
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_activities_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_tasks: {
+        Row: {
+          assignee: string | null
+          completed: boolean
+          created_at: string
+          due_date: string | null
+          id: string
+          job_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee?: string | null
+          completed?: boolean
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          job_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee?: string | null
+          completed?: boolean
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          job_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_tasks_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           address: string
