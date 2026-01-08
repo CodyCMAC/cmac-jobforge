@@ -1,12 +1,14 @@
 // Google API Configuration
-// Replace these with your own Google API credentials from https://console.cloud.google.com/
+// Uses environment variables - set these in your .env file
 
 export const GOOGLE_CONFIG = {
   // OAuth 2.0 Client ID (for Google Sign-In and Calendar access)
-  clientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+  // Set via VITE_GOOGLE_CLIENT_ID environment variable
+  clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || "",
   
   // API Key (for public calendar access)
-  apiKey: "YOUR_GOOGLE_API_KEY",
+  // Set via VITE_GOOGLE_API_KEY environment variable
+  apiKey: import.meta.env.VITE_GOOGLE_API_KEY || "",
   
   // Scopes needed for Google Calendar
   scopes: [
