@@ -4,6 +4,8 @@ export interface Job {
   id: string;
   address: string;
   customerName: string;
+  customerPhone?: string | null;
+  customerEmail?: string | null;
   value: number;
   status: "new" | "scheduled" | "sent" | "signed" | "production" | "complete";
   createdAt: Date;
@@ -13,6 +15,12 @@ export interface Job {
     name: string;
   };
   proposalStatus?: "won" | "draft" | "sent" | "viewed";
+  // New fields for activity feed
+  commentCount?: number;
+  lastActivityAt?: Date | null;
+  lastCommentAt?: Date | null;
+  lastCommentSnippet?: string | null;
+  priority?: string | null;
 }
 
 export interface PipelineStage {

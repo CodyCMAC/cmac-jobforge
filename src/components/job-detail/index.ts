@@ -7,3 +7,4 @@ export { JobWorkOrdersSection } from "./JobWorkOrdersSection";
 export { JobFinancialsSection } from "./JobFinancialsSection";
 export { JobAttachmentsSection } from "./JobAttachmentsSection";
 export { JobActivitySidebar } from "./JobActivitySidebar";
+export { JobCommentsSection } from "./JobCommentsSection";

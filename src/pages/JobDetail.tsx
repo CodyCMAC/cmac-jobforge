@@ -5,8 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Job } from "@/components/jobs/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { X, Plus, MoreHorizontal, Mail, Phone, Calendar as CalendarIcon, FileText, CheckCircle } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { X, Plus, MoreHorizontal, FileText } from "lucide-react";
 import { JobDetailsTab } from "@/components/job-detail/JobDetailsTab";
 import { JobTasksTab } from "@/components/job-detail/JobTasksTab";
 import { JobCalendarSection } from "@/components/job-detail/JobCalendarSection";
@@ -16,13 +15,31 @@ import { JobWorkOrdersSection } from "@/components/job-detail/JobWorkOrdersSecti
 import { JobFinancialsSection } from "@/components/job-detail/JobFinancialsSection";
 import { JobAttachmentsSection } from "@/components/job-detail/JobAttachmentsSection";
 import { JobActivitySidebar } from "@/components/job-detail/JobActivitySidebar";
+import { JobCommentsSection } from "@/components/job-detail/JobCommentsSection";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function JobDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("details");
+
+  // Check for comment anchor in URL
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#comment-')) {
+      setActiveTab('comments');
+      // Scroll to comment after a short delay
+      setTimeout(() => {
+        const element = document.getElementById(hash.slice(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('ring-2', 'ring-primary');
+          setTimeout(() => element.classList.remove('ring-2', 'ring-primary'), 2000);
+        }
+      }, 300);
+    }
+  }, []);
 
   const { data: job, isLoading } = useQuery({
     queryKey: ["job", id],
@@ -54,6 +71,11 @@ export default function JobDetail() {
         proposalStatus: data.proposal_status as Job["proposalStatus"],
         customerEmail: data.customer_email || undefined,
         customerPhone: data.customer_phone || undefined,
+        commentCount: data.comment_count,
+        lastActivityAt: data.last_activity_at ? new Date(data.last_activity_at) : null,
+        lastCommentAt: data.last_comment_at ? new Date(data.last_comment_at) : null,
+        lastCommentSnippet: data.last_comment_snippet,
+        priority: data.priority,
       };
 
       return transformedJob;
@@ -105,6 +127,7 @@ export default function JobDetail() {
   const tabs = [
     { id: "details", label: "Job details" },
     { id: "tasks", label: "Tasks" },
+    { id: "comments", label: `Comments${(job.commentCount ?? 0) > 0 ? ` (${job.commentCount})` : ''}` },
     { id: "calendar", label: "Calendar" },
     { id: "measurements", label: "Measurements" },
     { id: "proposals", label: "Proposals" },
@@ -175,6 +198,7 @@ export default function JobDetail() {
               <JobDetailsTab job={job} proposals={proposals} proposalTotal={proposalTotal} />
             )}
             {activeTab === "tasks" && <JobTasksTab jobId={job.id} />}
+            {activeTab === "comments" && <JobCommentsSection jobId={job.id} />}
             {activeTab === "calendar" && <JobCalendarSection jobId={job.id} />}
             {activeTab === "measurements" && <JobMeasurementsSection jobId={job.id} />}
             {activeTab === "proposals" && <JobProposalsSection jobId={job.id} proposals={proposals} />}
