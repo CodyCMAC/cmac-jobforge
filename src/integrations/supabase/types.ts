@@ -305,6 +305,104 @@ export type Database = {
           },
         ]
       }
+      job_activity: {
+        Row: {
+          actor_initials: string | null
+          actor_name: string | null
+          actor_user_id: string | null
+          created_at: string
+          id: string
+          job_id: string
+          metadata: Json | null
+          summary: string
+          type: Database["public"]["Enums"]["activity_type"]
+        }
+        Insert: {
+          actor_initials?: string | null
+          actor_name?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          metadata?: Json | null
+          summary: string
+          type: Database["public"]["Enums"]["activity_type"]
+        }
+        Update: {
+          actor_initials?: string | null
+          actor_name?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          metadata?: Json | null
+          summary?: string
+          type?: Database["public"]["Enums"]["activity_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_activity_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_comments: {
+        Row: {
+          author_initials: string
+          author_name: string
+          author_user_id: string
+          body: string
+          created_at: string
+          id: string
+          is_deleted: boolean
+          job_id: string
+          parent_comment_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_initials: string
+          author_name: string
+          author_user_id: string
+          body: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          job_id: string
+          parent_comment_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_initials?: string
+          author_name?: string
+          author_user_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          job_id?: string
+          parent_comment_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_comments_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_comments_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "job_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_tasks: {
         Row: {
           assignee: string | null
@@ -351,11 +449,16 @@ export type Database = {
           address: string
           assignee_initials: string
           assignee_name: string
+          comment_count: number
           created_at: string
           customer_email: string | null
           customer_name: string
           customer_phone: string | null
           id: string
+          last_activity_at: string | null
+          last_comment_at: string | null
+          last_comment_snippet: string | null
+          priority: string | null
           proposal_status: string | null
           status: string
           updated_at: string
@@ -365,11 +468,16 @@ export type Database = {
           address: string
           assignee_initials: string
           assignee_name: string
+          comment_count?: number
           created_at?: string
           customer_email?: string | null
           customer_name: string
           customer_phone?: string | null
           id?: string
+          last_activity_at?: string | null
+          last_comment_at?: string | null
+          last_comment_snippet?: string | null
+          priority?: string | null
           proposal_status?: string | null
           status?: string
           updated_at?: string
@@ -379,11 +487,16 @@ export type Database = {
           address?: string
           assignee_initials?: string
           assignee_name?: string
+          comment_count?: number
           created_at?: string
           customer_email?: string | null
           customer_name?: string
           customer_phone?: string | null
           id?: string
+          last_activity_at?: string | null
+          last_comment_at?: string | null
+          last_comment_snippet?: string | null
+          priority?: string | null
           proposal_status?: string | null
           status?: string
           updated_at?: string
@@ -561,7 +674,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      activity_type:
+        | "comment_created"
+        | "status_changed"
+        | "assigned_changed"
+        | "job_created"
+        | "task_completed"
+        | "proposal_created"
+        | "proposal_sent"
+        | "proposal_signed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -688,6 +809,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      activity_type: [
+        "comment_created",
+        "status_changed",
+        "assigned_changed",
+        "job_created",
+        "task_completed",
+        "proposal_created",
+        "proposal_sent",
+        "proposal_signed",
+      ],
+    },
   },
 } as const

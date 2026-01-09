@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { MainLayout, PageHeader } from "@/components/layout";
 import { StatCard, DashboardCalendar } from "@/components/dashboard";
 import { NewItemDropdown } from "@/components/dashboard/NewItemDropdown";
 import { UserDropdown } from "@/components/dashboard/UserDropdown";
+import { PulsePanel } from "@/components/dashboard/PulsePanel";
+import { JobDrawer } from "@/components/jobs/JobDrawer";
 import { Users, FileText, Eye, Receipt } from "lucide-react";
+import { useJobs } from "@/hooks/useJobs";
 
 const stats = [
   {
@@ -36,6 +40,10 @@ const stats = [
 
 export default function Dashboard() {
   const userName = "Cody";
+  const { data: jobs = [] } = useJobs();
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  
+  const selectedJob = jobs.find(j => j.id === selectedJobId) || null;
 
   return (
     <MainLayout>
@@ -51,30 +59,51 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Your Jobs Section */}
-        <div className="mb-8">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-foreground">Your jobs</h2>
-            <p className="text-sm text-muted-foreground">Some of your jobs may need a follow-up</p>
+        {/* Main Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Stats & Calendar */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Your Jobs Section */}
+            <div>
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-foreground">Your jobs</h2>
+                <p className="text-sm text-muted-foreground">Some of your jobs may need a follow-up</p>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {stats.map((stat) => (
+                  <StatCard
+                    key={stat.title}
+                    title={stat.title}
+                    value={stat.value}
+                    subtitle={stat.subtitle}
+                    icon={stat.icon}
+                    href={stat.href}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Calendar Section */}
+            <DashboardCalendar />
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map((stat) => (
-              <StatCard
-                key={stat.title}
-                title={stat.title}
-                value={stat.value}
-                subtitle={stat.subtitle}
-                icon={stat.icon}
-                href={stat.href}
-              />
-            ))}
+
+          {/* Right Column - Pulse Panel */}
+          <div className="lg:col-span-1">
+            <PulsePanel 
+              className="sticky top-6"
+              onJobClick={(jobId) => setSelectedJobId(jobId)}
+            />
           </div>
         </div>
-
-        {/* Calendar Section */}
-        <DashboardCalendar />
       </div>
+
+      {/* Job Drawer */}
+      <JobDrawer
+        job={selectedJob}
+        open={!!selectedJobId}
+        onOpenChange={(open) => !open && setSelectedJobId(null)}
+      />
     </MainLayout>
   );
 }
