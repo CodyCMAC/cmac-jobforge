@@ -9,5 +9,6 @@ export { JobFinancialsTab } from "./JobFinancialsTab";
 export { JobAttachmentsSection } from "./JobAttachmentsSection";
 export { JobActivitySidebar } from "./JobActivitySidebar";
 export { JobCommentsSection } from "./JobCommentsSection";
+export { JobCommissionsSection } from "./JobCommissionsSection";
 export { AddRevenueItemDialog } from "./AddRevenueItemDialog";
 export { AddCostItemDialog } from "./AddCostItemDialog";

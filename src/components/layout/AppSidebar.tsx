@@ -19,7 +19,9 @@ import {
   ChevronDown,
   LogOut,
   Sun,
-  Moon
+  Moon,
+  BadgeDollarSign,
+  Wallet
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -59,6 +61,8 @@ const navigation: NavSection[] = [
       { icon: ClipboardList, label: "Work Orders", href: "/work-orders" },
       { icon: Receipt, label: "Invoices", href: "/invoices" },
       { icon: DollarSign, label: "Payments", href: "/payments" },
+      { icon: BadgeDollarSign, label: "Commission Approvals", href: "/commissions/approvals" },
+      { icon: Wallet, label: "My Commissions", href: "/commissions/mine" },
     ],
   },
   {

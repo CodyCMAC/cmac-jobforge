@@ -24,6 +24,8 @@ import FileManager from "./pages/FileManager";
 import Catalog from "./pages/Catalog";
 import Automations from "./pages/Automations";
 import Communications from "./pages/Communications";
+import CommissionApprovals from "./pages/CommissionApprovals";
+import MyCommissions from "./pages/MyCommissions";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -89,6 +91,8 @@ const AppRoutes = () => (
     <Route path="/catalog" element={<ProtectedRoute><Catalog /></ProtectedRoute>} />
     <Route path="/automations" element={<ProtectedRoute><Automations /></ProtectedRoute>} />
     <Route path="/communications" element={<ProtectedRoute><Communications /></ProtectedRoute>} />
+    <Route path="/commissions/approvals" element={<ProtectedRoute><CommissionApprovals /></ProtectedRoute>} />
+    <Route path="/commissions/mine" element={<ProtectedRoute><MyCommissions /></ProtectedRoute>} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>
