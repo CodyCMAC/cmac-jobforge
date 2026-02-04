@@ -28,6 +28,7 @@ import CommissionApprovals from "./pages/CommissionApprovals";
 import MyCommissions from "./pages/MyCommissions";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import AdminHealth from "./pages/AdminHealth";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ const AppRoutes = () => (
     <Route path="/communications" element={<ProtectedRoute><Communications /></ProtectedRoute>} />
     <Route path="/commissions/approvals" element={<ProtectedRoute><CommissionApprovals /></ProtectedRoute>} />
     <Route path="/commissions/mine" element={<ProtectedRoute><MyCommissions /></ProtectedRoute>} />
+    <Route path="/admin/health" element={<ProtectedRoute><AdminHealth /></ProtectedRoute>} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>

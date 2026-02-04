@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MainLayout, PageHeader } from "@/components/layout";
 import { StatCard, DashboardCalendar } from "@/components/dashboard";
 import { NewItemDropdown } from "@/components/dashboard/NewItemDropdown";
@@ -7,43 +7,62 @@ import { PulsePanel } from "@/components/dashboard/PulsePanel";
 import { JobDrawer } from "@/components/jobs/JobDrawer";
 import { Users, FileText, Eye, Receipt } from "lucide-react";
 import { useJobs } from "@/hooks/useJobs";
-
-const stats = [
-  {
-    title: "Unactioned leads",
-    value: 14,
-    icon: Users,
-    href: "/jobs?stage=new-lead",
-  },
-  {
-    title: "Unopened sent proposals",
-    value: 0,
-    subtitle: "$0.00",
-    icon: FileText,
-    href: "/proposals?status=sent",
-  },
-  {
-    title: "Unsigned viewed proposals",
-    value: 0,
-    subtitle: "$0.00",
-    icon: Eye,
-    href: "/proposals?status=viewed",
-  },
-  {
-    title: "Overdue invoices",
-    value: 0,
-    subtitle: "$0.00",
-    icon: Receipt,
-    href: "/invoices?status=overdue",
-  },
-];
+import { useProposals } from "@/hooks/useProposals";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Dashboard() {
-  const userName = "Cody";
+  const { user } = useAuth();
+  const userName = user?.email?.split("@")[0] || "User";
   const { data: jobs = [] } = useJobs();
+  const { data: proposals = [] } = useProposals();
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   
   const selectedJob = jobs.find(j => j.id === selectedJobId) || null;
+
+  // Calculate real stats from data
+  const stats = useMemo(() => {
+    const unactionedLeads = jobs.filter(j => j.status === "new").length;
+    
+    const sentProposals = proposals.filter(p => p.status === "sent");
+    const sentProposalValue = sentProposals.reduce((sum, p) => sum + p.total, 0);
+    
+    const viewedProposals = proposals.filter(p => p.status === "viewed");
+    const viewedProposalValue = viewedProposals.reduce((sum, p) => sum + p.total, 0);
+    
+    // For overdue invoices, we'd need an invoices table - for now show 0
+    const overdueInvoices = 0;
+    const overdueInvoiceValue = 0;
+
+    return [
+      {
+        title: "Unactioned leads",
+        value: unactionedLeads,
+        icon: Users,
+        href: "/jobs?stage=new-lead",
+      },
+      {
+        title: "Unopened sent proposals",
+        value: sentProposals.length,
+        subtitle: `$${sentProposalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        icon: FileText,
+        href: "/proposals?status=sent",
+      },
+      {
+        title: "Unsigned viewed proposals",
+        value: viewedProposals.length,
+        subtitle: `$${viewedProposalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        icon: Eye,
+        href: "/proposals?status=viewed",
+      },
+      {
+        title: "Overdue invoices",
+        value: overdueInvoices,
+        subtitle: `$${overdueInvoiceValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        icon: Receipt,
+        href: "/invoices?status=overdue",
+      },
+    ];
+  }, [jobs, proposals]);
 
   return (
     <MainLayout>
@@ -54,7 +73,7 @@ export default function Dashboard() {
             <span className="text-3xl">👋</span> Hi {userName}, welcome home
           </h1>
           <div className="flex items-center gap-3">
-            <UserDropdown userName="Cody Viveiros" />
+            <UserDropdown userName={user?.email || "User"} />
             <NewItemDropdown />
           </div>
         </div>

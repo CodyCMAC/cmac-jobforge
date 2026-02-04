@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface StatCardProps {
   title: string;
@@ -16,8 +17,27 @@ interface StatCardProps {
 }
 
 export function StatCard({ title, value, subtitle, icon: Icon, trend, href, className }: StatCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (href) {
+      navigate(href);
+    }
+  };
+
   return (
-    <div className={cn("stat-card group cursor-pointer", className)}>
+    <div 
+      className={cn("stat-card group cursor-pointer", className)}
+      onClick={handleClick}
+      role={href ? "link" : undefined}
+      tabIndex={href ? 0 : undefined}
+      onKeyDown={(e) => {
+        if (href && (e.key === "Enter" || e.key === " ")) {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+    >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
