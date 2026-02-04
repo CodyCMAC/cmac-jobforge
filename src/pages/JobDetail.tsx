@@ -13,6 +13,7 @@ import { JobMeasurementsSection } from "@/components/job-detail/JobMeasurementsS
 import { JobProposalsSection } from "@/components/job-detail/JobProposalsSection";
 import { JobWorkOrdersSection } from "@/components/job-detail/JobWorkOrdersSection";
 import { JobFinancialsSection } from "@/components/job-detail/JobFinancialsSection";
+import { JobFinancialsTab } from "@/components/job-detail/JobFinancialsTab";
 import { JobAttachmentsSection } from "@/components/job-detail/JobAttachmentsSection";
 import { JobActivitySidebar } from "@/components/job-detail/JobActivitySidebar";
 import { JobCommentsSection } from "@/components/job-detail/JobCommentsSection";
@@ -135,7 +136,7 @@ export default function JobDetail() {
     { id: "material-orders", label: "Material orders" },
     { id: "work-orders", label: "Work orders" },
     { id: "invoices", label: "Invoices" },
-    { id: "job-costing", label: "Job costing" },
+    { id: "financials", label: "Financials" },
     { id: "attachments", label: "Attachments" },
     { id: "instant-estimate", label: "Instant Estimate" },
   ];
@@ -219,7 +220,7 @@ export default function JobDetail() {
                 <p>Invoices - Coming Soon</p>
               </div>
             )}
-            {activeTab === "job-costing" && <JobFinancialsSection proposals={proposals} />}
+            {activeTab === "financials" && <JobFinancialsTab jobId={job.id} />}
             {activeTab === "attachments" && <JobAttachmentsSection jobId={job.id} />}
             {activeTab === "instant-estimate" && (
               <div className="text-center py-12 text-muted-foreground">

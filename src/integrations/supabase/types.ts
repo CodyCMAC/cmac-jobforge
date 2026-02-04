@@ -14,6 +14,230 @@ export type Database = {
   }
   public: {
     Tables: {
+      commission_entries: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          base_amount: number
+          base_type: string
+          calculated_amount: number
+          clawback_of: string | null
+          clawback_reason: string | null
+          created_at: string
+          final_amount: number
+          id: string
+          job_id: string
+          margin_at_calc: number | null
+          override_amount: number | null
+          paid_at: string | null
+          payment_reference: string | null
+          rate_applied: number | null
+          role: string
+          rule_id: string | null
+          status: Database["public"]["Enums"]["commission_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          base_amount: number
+          base_type: string
+          calculated_amount: number
+          clawback_of?: string | null
+          clawback_reason?: string | null
+          created_at?: string
+          final_amount: number
+          id?: string
+          job_id: string
+          margin_at_calc?: number | null
+          override_amount?: number | null
+          paid_at?: string | null
+          payment_reference?: string | null
+          rate_applied?: number | null
+          role: string
+          rule_id?: string | null
+          status?: Database["public"]["Enums"]["commission_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          base_amount?: number
+          base_type?: string
+          calculated_amount?: number
+          clawback_of?: string | null
+          clawback_reason?: string | null
+          created_at?: string
+          final_amount?: number
+          id?: string
+          job_id?: string
+          margin_at_calc?: number | null
+          override_amount?: number | null
+          paid_at?: string | null
+          payment_reference?: string | null
+          rate_applied?: number | null
+          role?: string
+          rule_id?: string | null
+          status?: Database["public"]["Enums"]["commission_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_entries_clawback_of_fkey"
+            columns: ["clawback_of"]
+            isOneToOne: false
+            referencedRelation: "commission_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_entries_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_entries_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "commission_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commission_events: {
+        Row: {
+          actor_name: string | null
+          actor_user_id: string | null
+          created_at: string
+          entry_id: string
+          event_type: Database["public"]["Enums"]["commission_event_type"]
+          id: string
+          new_value: Json | null
+          old_value: Json | null
+          reason: string | null
+        }
+        Insert: {
+          actor_name?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          entry_id: string
+          event_type: Database["public"]["Enums"]["commission_event_type"]
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          reason?: string | null
+        }
+        Update: {
+          actor_name?: string | null
+          actor_user_id?: string | null
+          created_at?: string
+          entry_id?: string
+          event_type?: Database["public"]["Enums"]["commission_event_type"]
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_events_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "commission_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commission_plans: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      commission_rules: {
+        Row: {
+          calculation_type: Database["public"]["Enums"]["commission_calc_type"]
+          created_at: string
+          flat_amount: number | null
+          id: string
+          is_active: boolean
+          plan_id: string
+          priority: number
+          rate: number | null
+          role: string
+          split_percentage: number | null
+          tiers: Json | null
+          updated_at: string
+        }
+        Insert: {
+          calculation_type?: Database["public"]["Enums"]["commission_calc_type"]
+          created_at?: string
+          flat_amount?: number | null
+          id?: string
+          is_active?: boolean
+          plan_id: string
+          priority?: number
+          rate?: number | null
+          role: string
+          split_percentage?: number | null
+          tiers?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          calculation_type?: Database["public"]["Enums"]["commission_calc_type"]
+          created_at?: string
+          flat_amount?: number | null
+          id?: string
+          is_active?: boolean
+          plan_id?: string
+          priority?: number
+          rate?: number | null
+          role?: string
+          split_percentage?: number | null
+          tiers?: Json | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_rules_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "commission_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           address: string | null
@@ -406,6 +630,198 @@ export type Database = {
           },
         ]
       }
+      job_cost_items: {
+        Row: {
+          actual_amount: number | null
+          category: Database["public"]["Enums"]["cost_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          estimated_amount: number | null
+          id: string
+          item_date: string | null
+          job_id: string
+          receipt_url: string | null
+          updated_at: string
+          updated_by: string | null
+          vendor: string | null
+        }
+        Insert: {
+          actual_amount?: number | null
+          category?: Database["public"]["Enums"]["cost_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          estimated_amount?: number | null
+          id?: string
+          item_date?: string | null
+          job_id: string
+          receipt_url?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vendor?: string | null
+        }
+        Update: {
+          actual_amount?: number | null
+          category?: Database["public"]["Enums"]["cost_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          estimated_amount?: number | null
+          id?: string
+          item_date?: string | null
+          job_id?: string
+          receipt_url?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          vendor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_cost_items_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_financial_summary: {
+        Row: {
+          actual_costs: number | null
+          actual_margin: number | null
+          actual_profit: number | null
+          actual_revenue: number | null
+          approved_commissions: number | null
+          collected_amount: number | null
+          cost_items_count: number | null
+          cost_items_with_actuals: number | null
+          cost_variance: number | null
+          cost_variance_pct: number | null
+          draft_commissions: number | null
+          estimated_costs: number | null
+          estimated_margin: number | null
+          estimated_profit: number | null
+          estimated_revenue: number | null
+          job_id: string
+          last_calculated_at: string | null
+          paid_commissions: number | null
+          revenue_items_count: number | null
+          revenue_items_with_actuals: number | null
+          total_commissions: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          actual_costs?: number | null
+          actual_margin?: number | null
+          actual_profit?: number | null
+          actual_revenue?: number | null
+          approved_commissions?: number | null
+          collected_amount?: number | null
+          cost_items_count?: number | null
+          cost_items_with_actuals?: number | null
+          cost_variance?: number | null
+          cost_variance_pct?: number | null
+          draft_commissions?: number | null
+          estimated_costs?: number | null
+          estimated_margin?: number | null
+          estimated_profit?: number | null
+          estimated_revenue?: number | null
+          job_id: string
+          last_calculated_at?: string | null
+          paid_commissions?: number | null
+          revenue_items_count?: number | null
+          revenue_items_with_actuals?: number | null
+          total_commissions?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          actual_costs?: number | null
+          actual_margin?: number | null
+          actual_profit?: number | null
+          actual_revenue?: number | null
+          approved_commissions?: number | null
+          collected_amount?: number | null
+          cost_items_count?: number | null
+          cost_items_with_actuals?: number | null
+          cost_variance?: number | null
+          cost_variance_pct?: number | null
+          draft_commissions?: number | null
+          estimated_costs?: number | null
+          estimated_margin?: number | null
+          estimated_profit?: number | null
+          estimated_revenue?: number | null
+          job_id?: string
+          last_calculated_at?: string | null
+          paid_commissions?: number | null
+          revenue_items_count?: number | null
+          revenue_items_with_actuals?: number | null
+          total_commissions?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_financial_summary_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: true
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_revenue_items: {
+        Row: {
+          actual_amount: number | null
+          attachment_url: string | null
+          category: Database["public"]["Enums"]["revenue_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          estimated_amount: number | null
+          id: string
+          item_date: string | null
+          job_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          actual_amount?: number | null
+          attachment_url?: string | null
+          category?: Database["public"]["Enums"]["revenue_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          estimated_amount?: number | null
+          id?: string
+          item_date?: string | null
+          job_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          actual_amount?: number | null
+          attachment_url?: string | null
+          category?: Database["public"]["Enums"]["revenue_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          estimated_amount?: number | null
+          id?: string
+          item_date?: string | null
+          job_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_revenue_items_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_tasks: {
         Row: {
           assignee: string | null
@@ -507,6 +923,42 @@ export type Database = {
           status?: string
           updated_at?: string
           value?: number
+        }
+        Relationships: []
+      }
+      payout_batches: {
+        Row: {
+          batch_number: number
+          created_at: string
+          description: string | null
+          entry_ids: string[]
+          exported_at: string | null
+          exported_by: string | null
+          exported_format: string | null
+          id: string
+          total_amount: number
+        }
+        Insert: {
+          batch_number?: number
+          created_at?: string
+          description?: string | null
+          entry_ids: string[]
+          exported_at?: string | null
+          exported_by?: string | null
+          exported_format?: string | null
+          id?: string
+          total_amount: number
+        }
+        Update: {
+          batch_number?: number
+          created_at?: string
+          description?: string | null
+          entry_ids?: string[]
+          exported_at?: string | null
+          exported_by?: string | null
+          exported_format?: string | null
+          id?: string
+          total_amount?: number
         }
         Relationships: []
       }
@@ -698,6 +1150,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_job_financials: {
+        Args: { p_job_id: string }
+        Returns: {
+          actual_costs: number | null
+          actual_margin: number | null
+          actual_profit: number | null
+          actual_revenue: number | null
+          approved_commissions: number | null
+          collected_amount: number | null
+          cost_items_count: number | null
+          cost_items_with_actuals: number | null
+          cost_variance: number | null
+          cost_variance_pct: number | null
+          draft_commissions: number | null
+          estimated_costs: number | null
+          estimated_margin: number | null
+          estimated_profit: number | null
+          estimated_revenue: number | null
+          job_id: string
+          last_calculated_at: string | null
+          paid_commissions: number | null
+          revenue_items_count: number | null
+          revenue_items_with_actuals: number | null
+          total_commissions: number | null
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "job_financial_summary"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -717,6 +1202,51 @@ export type Database = {
         | "proposal_sent"
         | "proposal_signed"
       app_role: "admin" | "manager" | "member"
+      commission_calc_type:
+        | "percentage_of_revenue"
+        | "percentage_of_collected"
+        | "percentage_of_profit"
+        | "flat_amount"
+        | "tiered_percentage"
+      commission_event_type:
+        | "created"
+        | "recalculated"
+        | "status_changed"
+        | "amount_overridden"
+        | "voided"
+        | "paid"
+        | "clawback_created"
+      commission_status:
+        | "draft"
+        | "pending_approval"
+        | "approved"
+        | "payable"
+        | "paid"
+        | "voided"
+      cost_category:
+        | "materials_shingles"
+        | "materials_underlayment"
+        | "materials_flashing"
+        | "materials_other"
+        | "labor_crew"
+        | "labor_repair"
+        | "subcontractor"
+        | "dump_haul"
+        | "permits"
+        | "equipment_rental"
+        | "commission"
+        | "warranty_reserve"
+        | "overhead_allocation"
+        | "other_expense"
+      revenue_category:
+        | "contract"
+        | "change_order"
+        | "supplement"
+        | "upgrade"
+        | "discount"
+        | "refund"
+        | "sales_tax"
+        | "other_revenue"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -855,6 +1385,56 @@ export const Constants = {
         "proposal_signed",
       ],
       app_role: ["admin", "manager", "member"],
+      commission_calc_type: [
+        "percentage_of_revenue",
+        "percentage_of_collected",
+        "percentage_of_profit",
+        "flat_amount",
+        "tiered_percentage",
+      ],
+      commission_event_type: [
+        "created",
+        "recalculated",
+        "status_changed",
+        "amount_overridden",
+        "voided",
+        "paid",
+        "clawback_created",
+      ],
+      commission_status: [
+        "draft",
+        "pending_approval",
+        "approved",
+        "payable",
+        "paid",
+        "voided",
+      ],
+      cost_category: [
+        "materials_shingles",
+        "materials_underlayment",
+        "materials_flashing",
+        "materials_other",
+        "labor_crew",
+        "labor_repair",
+        "subcontractor",
+        "dump_haul",
+        "permits",
+        "equipment_rental",
+        "commission",
+        "warranty_reserve",
+        "overhead_allocation",
+        "other_expense",
+      ],
+      revenue_category: [
+        "contract",
+        "change_order",
+        "supplement",
+        "upgrade",
+        "discount",
+        "refund",
+        "sales_tax",
+        "other_revenue",
+      ],
     },
   },
 } as const
