@@ -23,6 +23,7 @@ export type Database = {
           label: string | null
           name: string
           notes: string | null
+          owner_user_id: string | null
           phone: string | null
           type: string
         }
@@ -34,6 +35,7 @@ export type Database = {
           label?: string | null
           name: string
           notes?: string | null
+          owner_user_id?: string | null
           phone?: string | null
           type?: string
         }
@@ -45,6 +47,7 @@ export type Database = {
           label?: string | null
           name?: string
           notes?: string | null
+          owner_user_id?: string | null
           phone?: string | null
           type?: string
         }
@@ -458,6 +461,7 @@ export type Database = {
           last_activity_at: string | null
           last_comment_at: string | null
           last_comment_snippet: string | null
+          owner_user_id: string | null
           priority: string | null
           proposal_status: string | null
           status: string
@@ -477,6 +481,7 @@ export type Database = {
           last_activity_at?: string | null
           last_comment_at?: string | null
           last_comment_snippet?: string | null
+          owner_user_id?: string | null
           priority?: string | null
           proposal_status?: string | null
           status?: string
@@ -496,6 +501,7 @@ export type Database = {
           last_activity_at?: string | null
           last_comment_at?: string | null
           last_comment_snippet?: string | null
+          owner_user_id?: string | null
           priority?: string | null
           proposal_status?: string | null
           status?: string
@@ -666,12 +672,39 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       activity_type:
@@ -683,6 +716,7 @@ export type Database = {
         | "proposal_created"
         | "proposal_sent"
         | "proposal_signed"
+      app_role: "admin" | "manager" | "member"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -820,6 +854,7 @@ export const Constants = {
         "proposal_sent",
         "proposal_signed",
       ],
+      app_role: ["admin", "manager", "member"],
     },
   },
 } as const

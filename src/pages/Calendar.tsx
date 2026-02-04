@@ -72,7 +72,7 @@ export default function CalendarPage() {
   const goToToday = () => setCurrentDate(new Date());
 
   const handleSyncGoogleCalendar = () => {
-    toast.info("Google Calendar sync requires API configuration. Add your Google API credentials to connect.");
+    toast.info("Google Calendar sync coming soon.");
   };
 
   const handleSettings = () => {
