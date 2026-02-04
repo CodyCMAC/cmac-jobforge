@@ -4,7 +4,7 @@ import { CreateJobDialog } from "@/components/jobs/CreateJobDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, ChevronDown, Search, Filter, Grid3X3, List, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useJobs } from "@/hooks/useJobs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 type ViewMode = "board" | "list";
 type WorkflowType = "sales" | "production";
+type SortOption = "date-desc" | "date-asc" | "value-desc" | "value-asc" | "customer";
 
 export default function Jobs() {
   const [viewMode, setViewMode] = useState<ViewMode>("board");
@@ -20,28 +21,77 @@ export default function Jobs() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [workflowFilter, setWorkflowFilter] = useState<string | null>(null);
+  const [sortOption, setSortOption] = useState<SortOption>("date-desc");
   
   const { data: jobs = [], isLoading } = useJobs();
 
-  // Build pipeline stages from database jobs
+  // Filter and sort jobs
+  const filteredAndSortedJobs = useMemo(() => {
+    let result = [...jobs];
+    
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(job => 
+        job.address.toLowerCase().includes(query) ||
+        job.customerName.toLowerCase().includes(query) ||
+        job.assignee.name.toLowerCase().includes(query)
+      );
+    }
+    
+    // Workflow filter
+    if (workflowFilter) {
+      const salesStatuses = ["new", "scheduled", "sent"];
+      const productionStatuses = ["signed", "production", "complete"];
+      
+      if (workflowFilter === "Sales") {
+        result = result.filter(job => salesStatuses.includes(job.status));
+      } else if (workflowFilter === "Production") {
+        result = result.filter(job => productionStatuses.includes(job.status));
+      }
+    }
+    
+    // Sort
+    switch (sortOption) {
+      case "date-desc":
+        result.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        break;
+      case "date-asc":
+        result.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+        break;
+      case "value-desc":
+        result.sort((a, b) => b.value - a.value);
+        break;
+      case "value-asc":
+        result.sort((a, b) => a.value - b.value);
+        break;
+      case "customer":
+        result.sort((a, b) => a.customerName.localeCompare(b.customerName));
+        break;
+    }
+    
+    return result;
+  }, [jobs, searchQuery, workflowFilter, sortOption]);
+
+  // Build pipeline stages from filtered jobs
   const salesPipelineStages: PipelineStage[] = [
     {
       id: "new-lead",
       name: "New lead",
       color: "blue",
-      jobs: jobs.filter(j => j.status === "new"),
+      jobs: filteredAndSortedJobs.filter(j => j.status === "new"),
     },
     {
       id: "appointment-scheduled",
       name: "Appointment scheduled",
       color: "cyan",
-      jobs: jobs.filter(j => j.status === "scheduled"),
+      jobs: filteredAndSortedJobs.filter(j => j.status === "scheduled"),
     },
     {
       id: "proposal-sent",
       name: "Proposal sent/presented",
       color: "purple",
-      jobs: jobs.filter(j => j.status === "sent"),
+      jobs: filteredAndSortedJobs.filter(j => j.status === "sent"),
     },
     {
       id: "proposal-followup",
@@ -56,7 +106,7 @@ export default function Jobs() {
       id: "proposal-signed",
       name: "Proposal signed",
       color: "green",
-      jobs: jobs.filter(j => j.status === "signed"),
+      jobs: filteredAndSortedJobs.filter(j => j.status === "signed"),
     },
     {
       id: "pre-production",
@@ -68,17 +118,27 @@ export default function Jobs() {
       id: "production",
       name: "Production",
       color: "orange",
-      jobs: jobs.filter(j => j.status === "production"),
+      jobs: filteredAndSortedJobs.filter(j => j.status === "production"),
     },
     {
       id: "post-production",
       name: "Post-production",
       color: "teal",
-      jobs: jobs.filter(j => j.status === "complete"),
+      jobs: filteredAndSortedJobs.filter(j => j.status === "complete"),
     },
   ];
 
   const stages = workflow === "sales" ? salesPipelineStages : productionPipelineStages;
+
+  const getSortLabel = () => {
+    switch (sortOption) {
+      case "date-desc": return "Newest first";
+      case "date-asc": return "Oldest first";
+      case "value-desc": return "Highest value";
+      case "value-asc": return "Lowest value";
+      case "customer": return "Customer A-Z";
+    }
+  };
 
   const handleOpenSettings = () => {
     toast.info("Settings page coming soon");
@@ -159,18 +219,29 @@ export default function Jobs() {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2">
                   <Filter className="w-4 h-4" />
-                  Filters & sort
+                  {getSortLabel()}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => toast.info("Sort by date")}>
-                  Sort by Date
+                <DropdownMenuItem onClick={() => setSortOption("date-desc")} className="flex items-center justify-between">
+                  Newest first
+                  {sortOption === "date-desc" && <Check className="w-4 h-4 ml-2" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast.info("Sort by value")}>
-                  Sort by Value
+                <DropdownMenuItem onClick={() => setSortOption("date-asc")} className="flex items-center justify-between">
+                  Oldest first
+                  {sortOption === "date-asc" && <Check className="w-4 h-4 ml-2" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast.info("Sort by customer")}>
-                  Sort by Customer
+                <DropdownMenuItem onClick={() => setSortOption("value-desc")} className="flex items-center justify-between">
+                  Highest value
+                  {sortOption === "value-desc" && <Check className="w-4 h-4 ml-2" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortOption("value-asc")} className="flex items-center justify-between">
+                  Lowest value
+                  {sortOption === "value-asc" && <Check className="w-4 h-4 ml-2" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortOption("customer")} className="flex items-center justify-between">
+                  Customer A-Z
+                  {sortOption === "customer" && <Check className="w-4 h-4 ml-2" />}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

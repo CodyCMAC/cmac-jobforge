@@ -1,4 +1,4 @@
-import { 
+import {
   Home, 
   Briefcase, 
   Calendar, 
@@ -21,7 +21,8 @@ import {
   Sun,
   Moon,
   BadgeDollarSign,
-  Wallet
+  Wallet,
+  Activity
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -73,6 +74,7 @@ const navigation: NavSection[] = [
       { icon: Tag, label: "Catalog", href: "/catalog" },
       { icon: Zap, label: "Automations", href: "/automations" },
       { icon: MessageSquare, label: "Communications", href: "/communications" },
+      { icon: Activity, label: "System Health", href: "/admin/health" },
     ],
   },
 ];
