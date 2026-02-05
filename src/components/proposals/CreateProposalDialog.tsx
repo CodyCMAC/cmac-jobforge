@@ -5,39 +5,66 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface CreateProposalDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  jobId?: string;
 }
 
-export function CreateProposalDialog({ open, onOpenChange }: CreateProposalDialogProps) {
+export function CreateProposalDialog({ open, onOpenChange, jobId }: CreateProposalDialogProps) {
+  const queryClient = useQueryClient();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     customerName: "",
     address: "",
     assignee: "",
     value: "",
     description: "",
+    title: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.customerName.trim() || !formData.address.trim()) {
-      toast.error("Customer name and address are required");
+    if (!jobId && (!formData.customerName.trim() || !formData.address.trim())) {
+      toast.error("Customer name and address are required when creating without a job");
       return;
     }
 
-    // For now, show success message - would integrate with proposals table
-    toast.success("Proposal created successfully");
-    onOpenChange(false);
-    setFormData({
-      customerName: "",
-      address: "",
-      assignee: "",
-      value: "",
-      description: "",
-    });
+    const title = formData.title.trim() || `Proposal - ${new Date().toLocaleDateString()}`;
+
+    if (jobId) {
+      // Create proposal for existing job
+      setIsSubmitting(true);
+      const { error } = await supabase.from("proposals").insert({
+        job_id: jobId,
+        title,
+        status: "draft",
+        total: formData.value ? parseFloat(formData.value) * 100 : 0,
+        customer_notes: formData.description.trim() || null,
+      });
+
+      setIsSubmitting(false);
+
+      if (error) {
+        toast.error("Failed to create proposal: " + error.message);
+        return;
+      }
+
+      toast.success("Proposal created successfully");
+      queryClient.invalidateQueries({ queryKey: ["job-proposals", jobId] });
+      queryClient.invalidateQueries({ queryKey: ["proposals"] });
+      onOpenChange(false);
+      setFormData({ customerName: "", address: "", assignee: "", value: "", description: "", title: "" });
+    } else {
+      // For now, show success message - would need to create job first
+      toast.info("Creating proposals without a job is coming soon");
+      onOpenChange(false);
+      setFormData({ customerName: "", address: "", assignee: "", value: "", description: "", title: "" });
+    }
   };
 
   return (
@@ -47,6 +74,18 @@ export function CreateProposalDialog({ open, onOpenChange }: CreateProposalDialo
           <DialogTitle>New Proposal</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Proposal Title</Label>
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              placeholder="Proposal title (optional)"
+            />
+          </div>
+          
+          {!jobId && (
+            <>
           <div className="space-y-2">
             <Label htmlFor="customerName">Customer Name *</Label>
             <Input
@@ -67,16 +106,9 @@ export function CreateProposalDialog({ open, onOpenChange }: CreateProposalDialo
             />
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="assignee">Assigned To</Label>
-            <Input
-              id="assignee"
-              value={formData.assignee}
-              onChange={(e) => setFormData(prev => ({ ...prev, assignee: e.target.value }))}
-              placeholder="Team member name"
-            />
-          </div>
-          
+            </>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="value">Proposal Value ($)</Label>
             <Input
@@ -105,8 +137,8 @@ export function CreateProposalDialog({ open, onOpenChange }: CreateProposalDialo
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">
-              Create Proposal
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creating..." : "Create Proposal"}
             </Button>
           </DialogFooter>
         </form>

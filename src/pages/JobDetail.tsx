@@ -5,7 +5,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { Job } from "@/components/jobs/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { X, Plus, MoreHorizontal, FileText } from "lucide-react";
+import { 
+  X, 
+  Plus, 
+  MoreHorizontal, 
+  FileText, 
+  CheckSquare, 
+  MessageSquare, 
+  CalendarPlus, 
+  ClipboardList,
+  Trash2,
+  Archive,
+  Copy
+} from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 import { JobDetailsTab } from "@/components/job-detail/JobDetailsTab";
 import { JobTasksTab } from "@/components/job-detail/JobTasksTab";
 import { JobCalendarSection } from "@/components/job-detail/JobCalendarSection";
@@ -19,11 +38,14 @@ import { JobActivitySidebar } from "@/components/job-detail/JobActivitySidebar";
 import { JobCommentsSection } from "@/components/job-detail/JobCommentsSection";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
+import { CreateProposalDialog } from "@/components/proposals/CreateProposalDialog";
+import { toast } from "sonner";
 
 export default function JobDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("details");
+  const [showCreateProposal, setShowCreateProposal] = useState(false);
 
   // Check for comment anchor in URL
   useEffect(() => {
@@ -154,14 +176,76 @@ export default function JobDetail() {
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <h1 className="text-xl font-semibold text-foreground">{job.address}</h1>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuItem onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast.success("Link copied to clipboard");
+                    }}>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy link
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => toast.info("Archive coming soon")}>
+                      <Archive className="h-4 w-4 mr-2" />
+                      Archive job
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="text-destructive focus:text-destructive"
+                      onClick={() => toast.info("Delete coming soon")}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete job
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <div className="flex items-center gap-2">
-                <Button size="icon" variant="ghost" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  <Plus className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="ghost" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => {
+                      setActiveTab("tasks");
+                      toast.info("Add a new task below");
+                    }}>
+                      <CheckSquare className="h-4 w-4 mr-2" />
+                      Add task
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => {
+                      setActiveTab("comments");
+                    }}>
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Add comment
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowCreateProposal(true)}>
+                      <FileText className="h-4 w-4 mr-2" />
+                      Create proposal
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => {
+                      setActiveTab("calendar");
+                      toast.info("Add calendar event below");
+                    }}>
+                      <CalendarPlus className="h-4 w-4 mr-2" />
+                      Add calendar event
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => {
+                      setActiveTab("work-orders");
+                      toast.info("Create work order below");
+                    }}>
+                      <ClipboardList className="h-4 w-4 mr-2" />
+                      Create work order
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Button 
                   size="icon" 
                   variant="ghost" 
@@ -233,6 +317,13 @@ export default function JobDetail() {
         {/* Right Sidebar - Activity & Contact */}
         <JobActivitySidebar job={job} />
       </div>
+
+      {/* Create Proposal Dialog */}
+      <CreateProposalDialog
+        open={showCreateProposal}
+        onOpenChange={setShowCreateProposal}
+        jobId={job.id}
+      />
     </MainLayout>
   );
 }
