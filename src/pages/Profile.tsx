@@ -1,4 +1,4 @@
- import { useState } from "react";
+import { useState } from "react";
  import { MainLayout, PageHeader } from "@/components/layout";
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Button } from "@/components/ui/button";
@@ -9,15 +9,25 @@
  import { useAuth } from "@/contexts/AuthContext";
  import { useUserRole } from "@/hooks/useUserRole";
  import { toast } from "sonner";
- import { User, Mail, Shield, Calendar, Save, Loader2 } from "lucide-react";
+import { User, Mail, Shield, Calendar, Save, Loader2, ArrowLeft } from "lucide-react";
  import { supabase } from "@/integrations/supabase/client";
  import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
  
  export default function Profile() {
    const { user } = useAuth();
    const { data: roleData, isLoading: roleLoading } = useUserRole();
    const [displayName, setDisplayName] = useState(user?.user_metadata?.full_name || "");
    const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
  
    const handleSaveProfile = async () => {
      if (!user) return;
@@ -50,14 +60,22 @@
      switch (role) {
        case "admin": return "Administrator";
        case "manager": return "Manager";
-       default: return "Team Member";
+      default: return "Standard";
      }
    };
  
    return (
      <MainLayout>
        <div className="animate-fade-in">
-         <PageHeader title="My Profile" />
+          <PageHeader
+            title="My Profile"
+            actions={
+              <Button variant="outline" onClick={handleBack} className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </Button>
+            }
+          />
  
          <div className="grid gap-6 md:grid-cols-2">
            {/* Profile Information */}

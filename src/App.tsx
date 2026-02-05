@@ -31,6 +31,7 @@ import NotFound from "./pages/NotFound";
 import AdminHealth from "./pages/AdminHealth";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import AdminUsers from "./pages/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -97,6 +98,7 @@ const AppRoutes = () => (
     <Route path="/commissions/approvals" element={<ProtectedRoute><CommissionApprovals /></ProtectedRoute>} />
     <Route path="/commissions/mine" element={<ProtectedRoute><MyCommissions /></ProtectedRoute>} />
     <Route path="/admin/health" element={<ProtectedRoute><AdminHealth /></ProtectedRoute>} />
+    <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
