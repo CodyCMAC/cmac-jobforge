@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_user_id: string
+          created_at: string
+          details: string | null
+          id: string
+          new_value: Json | null
+          old_value: Json | null
+          target_user_email: string | null
+          target_user_id: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_user_id: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          target_user_email?: string | null
+          target_user_id: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_user_id?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          target_user_email?: string | null
+          target_user_id?: string
+        }
+        Relationships: []
+      }
       commission_entries: {
         Row: {
           approved_at: string | null
@@ -1123,6 +1162,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_invites: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          invited_by_email: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          invited_by_email?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          invited_by_email?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          token?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
