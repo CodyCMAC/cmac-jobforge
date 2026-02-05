@@ -1,27 +1,32 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, User, Settings, LogOut, HelpCircle } from "lucide-react";
-import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UserDropdownProps {
   userName: string;
 }
 
 export function UserDropdown({ userName }: UserDropdownProps) {
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+
   const handleProfile = () => {
-    toast.info("Profile settings coming soon");
+    navigate("/profile");
   };
 
   const handleSettings = () => {
-    toast.info("Settings page coming soon");
+    navigate("/settings");
   };
 
   const handleHelp = () => {
-    toast.info("Help center coming soon");
+    window.open("https://docs.lovable.dev", "_blank");
   };
 
-  const handleLogout = () => {
-    toast.success("Logged out successfully");
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth");
   };
 
   return (
