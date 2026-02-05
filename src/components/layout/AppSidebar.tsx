@@ -22,13 +22,15 @@ import {
   Moon,
   BadgeDollarSign,
   Wallet,
-  Activity
+  Activity,
+  UserCog
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import cmacLogo from "@/assets/cmac-logo.png";
 import cmacIcon from "@/assets/cmac-icon.png";
 
@@ -89,7 +91,20 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { data: roleData } = useUserRole();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const isAdmin = !!roleData?.isAdmin;
+
+  const navSections: NavSection[] = isAdmin
+    ? [
+        ...navigation,
+        {
+          label: "Admin",
+          items: [{ icon: UserCog, label: "User Management", href: "/admin/users" }],
+        },
+      ]
+    : navigation;
 
   const handleSignOut = async () => {
     await signOut();
@@ -164,7 +179,7 @@ export function AppSidebar({ collapsed = false, onCollapse }: AppSidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 scrollbar-thin">
-        {navigation.map((section, sectionIdx) => (
+        {navSections.map((section, sectionIdx) => (
           <div key={sectionIdx} className={cn(sectionIdx > 0 && "mt-6")}>
             {section.label && !collapsed && (
               <p className="px-3 mb-3 text-[10px] font-bold text-sidebar-foreground/50 uppercase tracking-widest">

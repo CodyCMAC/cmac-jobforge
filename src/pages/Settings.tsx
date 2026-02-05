@@ -17,9 +17,11 @@
    Shield, 
    Loader2,
    Key,
-   AlertTriangle
+  AlertTriangle,
+  ArrowLeft
  } from "lucide-react";
  import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
  import {
    AlertDialog,
    AlertDialogAction,
@@ -35,6 +37,15 @@
  export default function Settings() {
    const { theme, toggleTheme } = useTheme();
    const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
    
    // Notification preferences (stored in localStorage for now)
    const [emailNotifications, setEmailNotifications] = useState(true);
@@ -102,7 +113,15 @@
    return (
      <MainLayout>
        <div className="animate-fade-in">
-         <PageHeader title="Settings" />
+          <PageHeader
+            title="Settings"
+            actions={
+              <Button variant="outline" onClick={handleBack} className="gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </Button>
+            }
+          />
  
          <div className="grid gap-6 max-w-2xl">
            {/* Appearance */}
