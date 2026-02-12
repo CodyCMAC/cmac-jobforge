@@ -14,8 +14,6 @@ import {
   MessageSquare, 
   CalendarPlus, 
   ClipboardList,
-  Trash2,
-  Archive,
   Copy
 } from "lucide-react";
 import { 
@@ -154,13 +152,9 @@ export default function JobDetail() {
     { id: "calendar", label: "Calendar" },
     { id: "measurements", label: "Measurements" },
     { id: "proposals", label: "Proposals" },
-    { id: "pdf-signer", label: "PDF signer" },
-    { id: "material-orders", label: "Material orders" },
     { id: "work-orders", label: "Work orders" },
-    { id: "invoices", label: "Invoices" },
     { id: "financials", label: "Financials" },
     { id: "attachments", label: "Attachments" },
-    { id: "instant-estimate", label: "Instant Estimate" },
   ];
 
   // Calculate proposal total
@@ -189,18 +183,6 @@ export default function JobDetail() {
                     }}>
                       <Copy className="h-4 w-4 mr-2" />
                       Copy link
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => toast.info("Archive coming soon")}>
-                      <Archive className="h-4 w-4 mr-2" />
-                      Archive job
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      className="text-destructive focus:text-destructive"
-                      onClick={() => toast.info("Delete coming soon")}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete job
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -287,30 +269,9 @@ export default function JobDetail() {
             {activeTab === "calendar" && <JobCalendarSection jobId={job.id} />}
             {activeTab === "measurements" && <JobMeasurementsSection jobId={job.id} />}
             {activeTab === "proposals" && <JobProposalsSection jobId={job.id} proposals={proposals} />}
-            {activeTab === "pdf-signer" && (
-              <div className="text-center py-12 text-muted-foreground">
-                <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>PDF Signer - Coming Soon</p>
-              </div>
-            )}
-            {activeTab === "material-orders" && (
-              <div className="text-center py-12 text-muted-foreground">
-                <p>Material Orders - Coming Soon</p>
-              </div>
-            )}
             {activeTab === "work-orders" && <JobWorkOrdersSection jobId={job.id} />}
-            {activeTab === "invoices" && (
-              <div className="text-center py-12 text-muted-foreground">
-                <p>Invoices - Coming Soon</p>
-              </div>
-            )}
             {activeTab === "financials" && <JobFinancialsTab jobId={job.id} />}
             {activeTab === "attachments" && <JobAttachmentsSection jobId={job.id} />}
-            {activeTab === "instant-estimate" && (
-              <div className="text-center py-12 text-muted-foreground">
-                <p>Instant Estimate - Coming Soon</p>
-              </div>
-            )}
           </div>
         </div>
 

@@ -6,12 +6,16 @@ import { CreateContactDialog } from "@/components/contacts";
 import { CreateJobDialog } from "@/components/jobs/CreateJobDialog";
 import { CreateEventDialog } from "@/components/calendar";
 import { CreateProposalDialog } from "@/components/proposals";
+import { CreateWorkOrderDialog } from "@/components/work-orders";
+import { CreateInvoiceDialog } from "@/components/invoices";
 
 export function NewItemDropdown() {
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [showJobDialog, setShowJobDialog] = useState(false);
   const [showEventDialog, setShowEventDialog] = useState(false);
   const [showProposalDialog, setShowProposalDialog] = useState(false);
+  const [showWorkOrderDialog, setShowWorkOrderDialog] = useState(false);
+  const [showInvoiceDialog, setShowInvoiceDialog] = useState(false);
 
   return (
     <>
@@ -41,11 +45,11 @@ export function NewItemDropdown() {
             New Event
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setShowJobDialog(true)}>
+          <DropdownMenuItem onClick={() => setShowInvoiceDialog(true)}>
             <Receipt className="w-4 h-4 mr-2" />
             New Invoice
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setShowJobDialog(true)}>
+          <DropdownMenuItem onClick={() => setShowWorkOrderDialog(true)}>
             <ClipboardList className="w-4 h-4 mr-2" />
             New Work Order
           </DropdownMenuItem>
@@ -56,6 +60,8 @@ export function NewItemDropdown() {
       <CreateJobDialog open={showJobDialog} onOpenChange={setShowJobDialog} />
       <CreateEventDialog open={showEventDialog} onOpenChange={setShowEventDialog} />
       <CreateProposalDialog open={showProposalDialog} onOpenChange={setShowProposalDialog} />
+      <CreateWorkOrderDialog open={showWorkOrderDialog} onOpenChange={setShowWorkOrderDialog} />
+      <CreateInvoiceDialog open={showInvoiceDialog} onOpenChange={setShowInvoiceDialog} />
     </>
   );
 }

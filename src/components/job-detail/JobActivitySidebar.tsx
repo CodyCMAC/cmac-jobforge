@@ -1,7 +1,7 @@
 import { forwardRef, useState } from "react";
 import { Job } from "@/components/jobs/types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import {
   Dialog,
   DialogContent,
@@ -11,22 +11,29 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import {
   Mail,
   Phone,
-  Plus,
   MoreHorizontal,
   Star,
-  Inbox,
-  ChevronDown,
   Calendar,
   FileText,
   Paperclip,
   FileCheck,
   MessageSquare,
   Loader2,
+  MessageCircle,
+  Copy,
+  User,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import { useJobActivities, JobActivity } from "@/hooks/useJobActivities";
 import { toast } from "sonner";
 
@@ -55,6 +62,28 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
       }
       toast.error("No phone number on this job");
     };
+
+    const handleSms = () => {
+      if (job.customerPhone) {
+        window.location.href = `sms:${job.customerPhone}`;
+        return;
+      }
+      toast.error("No phone number on this job");
+    };
+
+    const handleCopyDetails = () => {
+      const details = [
+        job.customerName,
+        job.customerEmail,
+        job.customerPhone,
+        job.address,
+      ].filter(Boolean).join("\n");
+      navigator.clipboard.writeText(details);
+      toast.success("Contact details copied");
+    };
+
+    const hasEmail = !!job.customerEmail;
+    const hasPhone = !!job.customerPhone;
 
     const getActivityIcon = (type: string) => {
       switch (type) {
@@ -91,113 +120,97 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
       <div ref={ref} className="w-80 border-l border-border bg-muted/30 flex flex-col h-full">
         {/* Customer Info */}
         <div className="p-4 border-b border-border">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold">{job.customerName}</h3>
               <Star className="h-4 w-4 text-warning fill-warning" />
             </div>
             <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={handleEmail}
-                aria-label="Email customer"
-              >
-                <Mail className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={handleCall}
-                aria-label="Call customer"
-              >
-                <Phone className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => toast.info("More actions coming soon")}
-                aria-label="More actions"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Company/Contact Card */}
-          <div className="bg-background border border-border rounded-lg p-3 mb-3">
-            <div className="flex items-center justify-between">
-              <span className="font-medium">Ateam</span>
-              <div className="flex items-center gap-1">
+              {hasEmail && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6"
-                  onClick={() => toast.info("Contact details coming soon")}
-                  aria-label="Open contact"
-                >
-                  <svg
-                    className="h-3 w-3"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                  </svg>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
+                  className="h-8 w-8"
                   onClick={handleEmail}
                   aria-label="Email customer"
                 >
-                  <Mail className="h-3 w-3" />
+                  <Mail className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={handleCall}
-                  aria-label="Call customer"
-                >
-                  <Phone className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={() => toast.info("More actions coming soon")}
-                  aria-label="More actions"
-                >
-                  <MoreHorizontal className="h-3 w-3" />
-                </Button>
-              </div>
+              )}
+              {hasPhone && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={handleCall}
+                    aria-label="Call customer"
+                  >
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={handleSms}
+                    aria-label="Text customer"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    aria-label="More actions"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleCopyDetails}>
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy contact details
+                  </DropdownMenuItem>
+                  {hasEmail && (
+                    <DropdownMenuItem onClick={handleEmail}>
+                      <Mail className="h-4 w-4 mr-2" />
+                      Send email
+                    </DropdownMenuItem>
+                  )}
+                  {hasPhone && (
+                    <>
+                      <DropdownMenuItem onClick={handleCall}>
+                        <Phone className="h-4 w-4 mr-2" />
+                        Call
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleSms}>
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Send text
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full gap-2"
-            onClick={() => toast.info("Add contact coming soon")}
-          >
-            <Plus className="h-4 w-4" />
-            Add contact
-          </Button>
+          {/* Contact Role Badge */}
+          <div className="mb-3">
+            <Badge variant="secondary" className="gap-1">
+              <User className="h-3 w-3" />
+              Customer
+            </Badge>
+          </div>
         </div>
 
         {/* Activity Log */}
         <div className="flex-1 overflow-y-auto">
-          <div className="p-4 flex items-center justify-between border-b border-border sticky top-0 bg-muted/30">
+          <div className="p-4 flex items-center border-b border-border sticky top-0 bg-muted/30">
             <h4 className="font-semibold">Activity log</h4>
-            <Button variant="link" size="sm" className="text-primary">
-              Filter
-            </Button>
           </div>
 
           {isLoading ? (
@@ -244,19 +257,12 @@ export const JobActivitySidebar = forwardRef<HTMLDivElement, JobActivitySidebarP
           <Button variant="outline" size="sm" onClick={() => setNoteDialogOpen(true)}>
             Internal note
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1"
-            onClick={() => toast.info("Inbox coming soon")}
-          >
-            <Inbox className="h-3 w-3" />
-            Inbox
-          </Button>
-          <Button variant="outline" size="sm" className="gap-1" onClick={handleEmail}>
-            Compose
-            <ChevronDown className="h-3 w-3" />
-          </Button>
+          {hasEmail && (
+            <Button variant="outline" size="sm" className="gap-1" onClick={handleEmail}>
+              <Mail className="h-3 w-3" />
+              Compose
+            </Button>
+          )}
         </div>
 
         {/* Internal Note Dialog */}
