@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
 export interface ProposalLineItem {
   id: string;
@@ -54,6 +55,8 @@ export interface Proposal {
   };
   options?: ProposalOption[];
 }
+
+type ProposalUpdate = Database["public"]["Tables"]["proposals"]["Update"];
 
 export function useProposals() {
   return useQuery({
@@ -149,7 +152,7 @@ export function useUpdateProposal() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: Partial<Proposal> }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: ProposalUpdate }) => {
       const { error } = await supabase
         .from("proposals")
         .update(updates)

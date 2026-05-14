@@ -1,33 +1,39 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
-export interface InstantEstimator {
-  id: string;
-  name: string;
-  estimate_type: string;
-  slug: string | null;
-  is_active: boolean;
-  pricing_unit: string;
-  show_price_range: boolean;
-  show_financing: boolean;
-  financing_link: string | null;
-  default_assignee: string | null;
+type InstantEstimatorRow = Database["public"]["Tables"]["instant_estimators"]["Row"];
+type InstantEstimatorUpdate = Database["public"]["Tables"]["instant_estimators"]["Update"];
+type InstantEstimatorContactRow = Database["public"]["Tables"]["instant_estimator_contact_details"]["Row"];
+type InstantEstimatorContactInsert = Database["public"]["Tables"]["instant_estimator_contact_details"]["Insert"];
+type InstantEstimatorContactUpdate = Database["public"]["Tables"]["instant_estimator_contact_details"]["Update"];
+
+export interface InstantEstimator extends InstantEstimatorRow {
   contact_name: string | null;
   contact_email: string | null;
   contact_phone: string | null;
-  scheduling_link: string | null;
-  show_social_links: boolean;
-  show_project_showcase: boolean;
-  require_phone: boolean;
-  require_email: boolean;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface CreateEstimatorInput {
   name: string;
   estimate_type: string;
+}
+
+function mapEstimator(
+  estimator: InstantEstimatorRow & {
+    instant_estimator_contact_details: InstantEstimatorContactRow | InstantEstimatorContactRow[] | null;
+  }
+): InstantEstimator {
+  const rawContact = estimator.instant_estimator_contact_details;
+  const contact = Array.isArray(rawContact) ? rawContact[0] ?? null : rawContact;
+
+  return {
+    ...estimator,
+    contact_name: contact?.contact_name ?? null,
+    contact_email: contact?.contact_email ?? null,
+    contact_phone: contact?.contact_phone ?? null,
+  };
 }
 
 export function useInstantEstimators() {
@@ -36,11 +42,17 @@ export function useInstantEstimators() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("instant_estimators")
-        .select("*")
+        .select("*, instant_estimator_contact_details(contact_name, contact_email, contact_phone)")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as InstantEstimator[];
+      return (data || []).map((estimator) =>
+        mapEstimator(
+          estimator as InstantEstimatorRow & {
+            instant_estimator_contact_details: InstantEstimatorContactRow | InstantEstimatorContactRow[] | null;
+          }
+        )
+      );
     },
   });
 }
@@ -52,12 +64,18 @@ export function useInstantEstimator(id: string | undefined) {
       if (!id) return null;
       const { data, error } = await supabase
         .from("instant_estimators")
-        .select("*")
+        .select("*, instant_estimator_contact_details(contact_name, contact_email, contact_phone)")
         .eq("id", id)
         .maybeSingle();
 
       if (error) throw error;
-      return data as InstantEstimator | null;
+      return data
+        ? mapEstimator(
+            data as InstantEstimatorRow & {
+              instant_estimator_contact_details: InstantEstimatorContactRow | InstantEstimatorContactRow[] | null;
+            }
+          )
+        : null;
     },
     enabled: !!id,
   });
@@ -107,15 +125,48 @@ export function useUpdateEstimator() {
       id: string;
       updates: Partial<InstantEstimator>;
     }) => {
+      const { contact_name, contact_email, contact_phone, ...estimatorUpdates } = updates;
+      const normalizedEstimatorUpdates = estimatorUpdates as InstantEstimatorUpdate;
+      const hasEstimatorUpdates = Object.keys(normalizedEstimatorUpdates).length > 0;
+      const hasContactUpdates = [contact_name, contact_email, contact_phone].some((value) => value !== undefined);
+
+      if (hasEstimatorUpdates) {
+        const { error } = await supabase
+          .from("instant_estimators")
+          .update(normalizedEstimatorUpdates)
+          .eq("id", id);
+
+        if (error) throw error;
+      }
+
+      if (hasContactUpdates) {
+        const contactPayload: InstantEstimatorContactInsert = {
+          estimator_id: id,
+          contact_name: contact_name ?? null,
+          contact_email: contact_email ?? null,
+          contact_phone: contact_phone ?? null,
+        };
+
+        const { error } = await supabase
+          .from("instant_estimator_contact_details")
+          .upsert(contactPayload, { onConflict: "estimator_id" });
+
+        if (error) throw error;
+      }
+
       const { data, error } = await supabase
         .from("instant_estimators")
-        .update(updates)
+        .select("*, instant_estimator_contact_details(contact_name, contact_email, contact_phone)")
         .eq("id", id)
-        .select()
         .single();
 
       if (error) throw error;
-      return data;
+
+      return mapEstimator(
+        data as InstantEstimatorRow & {
+          instant_estimator_contact_details: InstantEstimatorContactRow | InstantEstimatorContactRow[] | null;
+        }
+      );
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["instant-estimators"] });
