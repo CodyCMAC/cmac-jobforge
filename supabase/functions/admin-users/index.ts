@@ -3,6 +3,23 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.89.0";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
+const RATE_LIMITS = {
+  list: { requests: 100, windowMs: 60_000 },
+  update: { requests: 20, windowMs: 60_000 },
+  invite: { requests: 10, windowMs: 60_000 },
+  list_invites: { requests: 50, windowMs: 60_000 },
+  delete_invite: { requests: 30, windowMs: 60_000 },
+  list_audit: { requests: 50, windowMs: 60_000 },
+} as const;
+
+type RateLimitedAction = keyof typeof RATE_LIMITS;
+
+const rateLimitStore = new Map<string, number[]>();
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
@@ -42,6 +59,46 @@ async function insertAudit(client: any, entry: AuditEntry) {
     new_value: entry.new_value ? JSON.parse(JSON.stringify(entry.new_value)) : null,
     details: entry.details ?? null,
   });
+}
+
+function isRateLimited(userId: string, action: string) {
+  if (!(action in RATE_LIMITS)) {
+    return false;
+  }
+
+  const { requests, windowMs } = RATE_LIMITS[action as RateLimitedAction];
+  const now = Date.now();
+  const key = `${userId}:${action}`;
+  const recentHits = (rateLimitStore.get(key) ?? []).filter((timestamp) => now - timestamp < windowMs);
+
+  if (recentHits.length >= requests) {
+    rateLimitStore.set(key, recentHits);
+    return true;
+  }
+
+  recentHits.push(now);
+  rateLimitStore.set(key, recentHits);
+  return false;
+}
+
+function sanitizeOptionalString(value: unknown, maxLength: number) {
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (trimmed.length > maxLength) {
+    throw new Error(`Value must be ${maxLength} characters or fewer`);
+  }
+
+  return trimmed;
+}
+
+function validateEmail(email: string) {
+  return EMAIL_REGEX.test(email);
+}
+
+function validateUuid(value: string) {
+  return UUID_REGEX.test(value);
 }
 
 Deno.serve(async (req) => {
@@ -88,6 +145,10 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({} as any));
     const action = (body?.action ?? "list") as string;
 
+    if (isRateLimited(caller.id, action)) {
+      return json({ error: "Rate limit exceeded. Please try again shortly." }, 429);
+    }
+
     if (action === "list") {
       const page = Number(body?.page ?? 1);
       const perPage = Math.min(200, Math.max(1, Number(body?.perPage ?? 200)));
@@ -128,11 +189,18 @@ Deno.serve(async (req) => {
     }
 
     if (action === "update") {
-      const userId = String(body?.userId ?? "");
+      const userId = String(body?.userId ?? "").trim();
       const role = String(body?.role ?? "") as Role;
-      const fullName = body?.fullName;
+      let fullName: string | null;
+
+      try {
+        fullName = sanitizeOptionalString(body?.fullName, 100);
+      } catch (error) {
+        return json({ error: error instanceof Error ? error.message : "Invalid full name" }, 400);
+      }
 
       if (!userId) return json({ error: "Missing userId" }, 400);
+      if (!validateUuid(userId)) return json({ error: "Invalid userId" }, 400);
       if (role !== "admin" && role !== "manager" && role !== "member") {
         return json({ error: "Invalid role" }, 400);
       }
@@ -162,7 +230,7 @@ Deno.serve(async (req) => {
       if (insertErr) return json({ error: insertErr.message }, 400);
 
       // Update display name (auth user metadata)
-      if (typeof fullName === "string") {
+      if (fullName !== null) {
         const { data: existing, error: getErr } = await adminClient.auth.admin.getUserById(userId);
         if (getErr) return json({ error: getErr.message }, 400);
 
@@ -207,7 +275,7 @@ Deno.serve(async (req) => {
       const email = String(body?.email ?? "").trim().toLowerCase();
       const role = (body?.role ?? "member") as Role;
 
-      if (!email || !email.includes("@")) {
+      if (!email || !validateEmail(email) || email.length > 320) {
         return json({ error: "Valid email required" }, 400);
       }
       if (role !== "admin" && role !== "manager" && role !== "member") {
@@ -282,8 +350,9 @@ Deno.serve(async (req) => {
 
     // --- Delete invite ---
     if (action === "delete_invite") {
-      const inviteId = String(body?.inviteId ?? "");
+      const inviteId = String(body?.inviteId ?? "").trim();
       if (!inviteId) return json({ error: "Missing inviteId" }, 400);
+      if (!validateUuid(inviteId)) return json({ error: "Invalid inviteId" }, 400);
 
       const { error: delErr } = await adminClient.from("user_invites").delete().eq("id", inviteId);
       if (delErr) return json({ error: delErr.message }, 400);
