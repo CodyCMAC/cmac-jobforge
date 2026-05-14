@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -102,6 +103,8 @@ export interface CommissionEvent {
   reason: string | null;
   created_at: string;
 }
+
+type CommissionEntryUpdate = Database["public"]["Tables"]["commission_entries"]["Update"];
 
 // =============================================================================
 // Status Labels & Colors
@@ -276,7 +279,7 @@ export function useUpdateCommissionStatus() {
       if (fetchError) throw fetchError;
 
       // Update entry
-      const updates: Partial<CommissionEntry> = { status: newStatus };
+      const updates: CommissionEntryUpdate = { status: newStatus };
       if (newStatus === "approved" || newStatus === "payable") {
         updates.approved_by = user?.id || null;
         updates.approved_at = new Date().toISOString();
