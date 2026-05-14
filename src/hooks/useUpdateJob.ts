@@ -1,12 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
+
+type JobUpdate = Database["public"]["Tables"]["jobs"]["Update"];
 
 export function useUpdateJob(jobId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (updates: Record<string, unknown>) => {
+    mutationFn: async (updates: JobUpdate) => {
       const { error } = await supabase
         .from("jobs")
         .update(updates)
