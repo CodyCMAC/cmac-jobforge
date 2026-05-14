@@ -461,11 +461,43 @@ export type Database = {
           },
         ]
       }
-      instant_estimators: {
+      instant_estimator_contact_details: {
         Row: {
           contact_email: string | null
           contact_name: string | null
           contact_phone: string | null
+          created_at: string
+          estimator_id: string
+          updated_at: string
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          estimator_id: string
+          updated_at?: string
+        }
+        Update: {
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          estimator_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instant_estimator_contact_details_estimator_id_fkey"
+            columns: ["estimator_id"]
+            isOneToOne: true
+            referencedRelation: "instant_estimators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      instant_estimators: {
+        Row: {
           created_at: string
           default_assignee: string | null
           estimate_type: string
@@ -485,9 +517,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          contact_email?: string | null
-          contact_name?: string | null
-          contact_phone?: string | null
           created_at?: string
           default_assignee?: string | null
           estimate_type?: string
@@ -507,9 +536,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          contact_email?: string | null
-          contact_name?: string | null
-          contact_phone?: string | null
           created_at?: string
           default_assignee?: string | null
           estimate_type?: string
